@@ -1,0 +1,93 @@
+{\"report\":{\"resultSummary\":{\"title\":\"Sanctions Check Report\",\"version\":\"Last Updated 13/04/2018\",\"downloaded\":\"15/04/2018 21:00:01\",\"searchtext\":\"amar aachi#\",\"numberOfResults\":\"0\"}}}
+
+empty
+{
+	"report": {
+		"resultSummary": {
+			"title": "Sanctions Check Report",
+			"version": "Last Updated 13/04/2018",
+			"downloaded": "15/04/2018 21:00:01",
+			"searchtext": "amar aachi#",
+			"numberOfResults": "0"
+		}
+	}
+}
+
+"{\"report\":{\"resultSummary\":{\"title\":\"Sanctions Check Report\",\"version\":\"Last Updated 13/04/2018\",\"downloaded\":\"15/04/2018 21:00:01\",\"searchtext\":\"ammar aachi#amar aachi#ABBAS Ghassan#\",\"numberOfResults\":\"0\"}}}"
+
+"{\"report\":{\"resultSummary\":{\"title\":\"Sanctions Check Report\",\"version\":\"Last Updated 13/04/2018\",\"downloaded\":\"15/04/2018 21:00:01\",\"searchtext\":\"ammar aachi#amar aachi#ABBAS Ghassan\",\"numberOfResults\":\"2\"},\"record\":[{\"recordnumber\":\"1\",\"Name6\":\"AACHI\",\"Name1\":\"Ammar\",\"Name2\":null,\"Name3\":null,\"Name4\":null,\"Name5\":null,\"Title\":null,\"DOB\":null,\"TownofBirth\":null,\"CountryofBirth\":null,\"Nationality\":null,\"PassportDetails\":null,\"NINumber\":null,\"Position\":\"Head of the intelligence branch of the air force intelligence service\",\"Address1\":null,\"Address2\":null,\"Address3\":null,\"Address4\":null,\"Address5\":null,\"Address6\":null,\"PostCode\":null,\"Country\":null,\"OtherInformation\":\"Graduate of the military school of Aleppo. Close to Daoud Rajah\",\"GroupType\":\"Individual\",\"AliasType\":\"AKA\",\"Regime\":\"Syria\",\"ListedOn\":\"24/07/2012\",\"LastUpdated\":\"24/07/2012\",\"GroupID\":\"12727\"},{\"recordnumber\":\"2\",\"Name6\":\"ABBAS\",\"Name1\":\"Ghassan\",\"Name2\":null,\"Name3\":null,\"Name4\":null,\"Name5\":null,\"Title\":\"Brigadier General\",\"DOB\":\"10/03/1960\",\"TownofBirth\":\"Homs\",\"CountryofBirth\":null,\"Nationality\":null,\"PassportDetails\":null,\"NINumber\":null,\"Position\":\"Manager of the branch of Syrian Scientific Studies and research Centre (SSRCC/CERS) near Jumraya/Jmraiya\",\"Address1\":\"CERS, Centre d'Etude et de Recherche Scientifique\",\"Address2\":\"Centre de Recherche de Kaboun Barzar Street\",\"Address3\":\"PO Box 4470\",\"Address4\":\"Damascus\",\"Address5\":null,\"Address6\":null,\"PostCode\":null,\"Country\":null,\"OtherInformation\":\"CERS is also known as SSRC, Scientific Studies and Research Center.\",\"GroupType\":\"Individual\",\"AliasType\":\"Prime Alias\",\"Regime\":\"Syria\",\"ListedOn\":\"09/03/2015\",\"LastUpdated\":\"01/10/2016\",\"GroupID\":\"13229\"}]}}"
+
+{
+	"report": {
+		"resultSummary": {
+			"title": "Sanctions Check Report",
+			"version": "Last Updated 13/04/2018",
+			"downloaded": "15/04/2018 21:00:01",
+			"searchtext": "ammar aachi#amar aachi#ABBAS Ghassan",
+			"numberOfResults": "2"
+		},
+		"record": [{
+			"recordnumber": "1",
+			"Name6": "AACHI",
+			"Name1": "Ammar",
+			"Name2": null,
+			"Name3": null,
+			"Name4": null,
+			"Name5": null,
+			"Title": null,
+			"DOB": null,
+			"TownofBirth": null,
+			"CountryofBirth": null,
+			"Nationality": null,
+			"PassportDetails": null,
+			"NINumber": null,
+			"Position": "Head of the intelligence branch of the air force intelligence service",
+			"Address1": null,
+			"Address2": null,
+			"Address3": null,
+			"Address4": null,
+			"Address5": null,
+			"Address6": null,
+			"PostCode": null,
+			"Country": null,
+			"OtherInformation": "Graduate of the military school of Aleppo. Close to Daoud Rajah",
+			"GroupType": "Individual",
+			"AliasType": "AKA",
+			"Regime": "Syria",
+			"ListedOn": "24/07/2012",
+			"LastUpdated": "24/07/2012",
+			"GroupID": "12727"
+		}, {
+			"recordnumber": "2",
+			"Name6": "ABBAS",
+			"Name1": "Ghassan",
+			"Name2": null,
+			"Name3": null,
+			"Name4": null,
+			"Name5": null,
+			"Title": "Brigadier General",
+			"DOB": "10/03/1960",
+			"TownofBirth": "Homs",
+			"CountryofBirth": null,
+			"Nationality": null,
+			"PassportDetails": null,
+			"NINumber": null,
+			"Position": "Manager of the branch of Syrian Scientific Studies and research Centre (SSRCC/CERS) near Jumraya/Jmraiya",
+			"Address1": "CERS, Centre d'Etude et de Recherche Scientifique",
+			"Address2": "Centre de Recherche de Kaboun Barzar Street",
+			"Address3": "PO Box 4470",
+			"Address4": "Damascus",
+			"Address5": null,
+			"Address6": null,
+			"PostCode": null,
+			"Country": null,
+			"OtherInformation": "CERS is also known as SSRC, Scientific Studies and Research Center.",
+			"GroupType": "Individual",
+			"AliasType": "Prime Alias",
+			"Regime": "Syria",
+			"ListedOn": "09/03/2015",
+			"LastUpdated": "01/10/2016",
+			"GroupID": "13229"
+		}]
+	}
+}
