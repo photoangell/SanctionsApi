@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using SanctionsApi.Models;
 
 namespace SanctionsApi.Controllers
 {
@@ -19,12 +20,16 @@ namespace SanctionsApi.Controllers
 
         // GET api/values/5
         [HttpGet("{searchString}")]
-        public ActionResult<string> Get(string searchString)
+        public ObjectResult Get(string searchString)
         {
             //return string.Join(",", id);
             //string bums = id.ToString();
             //string bums = string.Join(",", id);
-            return searchString;
+
+            var container = new Container();
+            container.report.resultSummary.searchtext = searchString;
+
+            return new ObjectResult(container);
         }
 
         // POST api/values

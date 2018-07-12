@@ -1,12 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SanctionsApi.Models {
     class Report{
-        ResultSummary resultSummary;
+        //properties
+        public ResultSummary resultSummary;
+        //constructors
+        public Report() {
+            resultSummary = new ResultSummary();
+        }
     }
-
-
 }

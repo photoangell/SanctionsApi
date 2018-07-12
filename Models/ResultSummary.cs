@@ -1,15 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SanctionsApi.Models {
     class ResultSummary{
-        string title;
-		string version;
-		string downloaded;
-		string searchtext;
-		int numberOfResults;
+		//properties
+        public string title;
+		public string version;
+		public string downloaded;
+		public string searchtext;
+		public int numberOfResults;
     }
 
 
