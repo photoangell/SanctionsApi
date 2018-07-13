@@ -1,7 +1,7 @@
 using System;
 
 namespace SanctionsApi.Models {
-    class Container{
+    public class Container{
         //properties
         public Report report;
 

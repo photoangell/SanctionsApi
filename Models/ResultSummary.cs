@@ -1,7 +1,7 @@
 using System;
 
 namespace SanctionsApi.Models {
-    class ResultSummary{
+    public class ResultSummary{
 		//properties
         public string title;
 		public string version;
