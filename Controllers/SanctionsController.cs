@@ -17,25 +17,27 @@ namespace SanctionsApi.Controllers
     public class SanctionsController : ControllerBase
     {
         // GET api/values
-        [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
+//        [HttpGet]
+//        public ActionResult<IEnumerable<string>> Get()
+//        {
+//            return new string[] { "value1", "value2" };
+//        }
 
         // GET api/values/5
         [HttpGet("{searchString}")]
         public ObjectResult Get(string searchString)
         {
             int counter = 0;
-            //string[] names = searchString.Split("#");
-            string[] names = searchString.Split(new [] { '#' }, StringSplitOptions.RemoveEmptyEntries);
             var container = new Container();
             container.report.resultSummary.searchtext = searchString;
+            container.report.resultSummary.title = "Sanctions Check Report";
+            container.report.resultSummary.downloaded = System.IO.File.GetLastWriteTime(@"C:\projects\legalcontingency\Sanctions\sanctionsconlist.csv").ToString();
+            string[] names = searchString.ToLower().Split(new [] { '#' }, StringSplitOptions.RemoveEmptyEntries);
 
             //return string.Join(",", id);
             //string bums = id.ToString();
             //string bums = string.Join(",", id);
+            
             using (TextReader fileReader = System.IO.File.OpenText(@"C:\projects\legalcontingency\Sanctions\sanctionsconlist.csv"))
             {
                 var csv = new CsvReader(fileReader);
@@ -80,13 +82,13 @@ namespace SanctionsApi.Controllers
 //        {
 //        }
 
-        public bool isNameInRecord(CSV record, string name) {
-            if (record.Name1 == name) {return true;}
-            if (record.Name2 == name) {return true;}
-            if (record.Name3 == name) {return true;}
-            if (record.Name4 == name) {return true;}
-            if (record.Name5 == name) {return true;}
-            if (record.Name6 == name) {return true;}
+        private bool isNameInRecord(CSV record, string name) {
+            if (record.Name1.ToLower() == name) {return true;}
+            if (record.Name2.ToLower() == name) {return true;}
+            if (record.Name3.ToLower() == name) {return true;}
+            if (record.Name4.ToLower() == name) {return true;}
+            if (record.Name5.ToLower() == name) {return true;}
+            if (record.Name6.ToLower() == name) {return true;}
             return false;
         }
 
