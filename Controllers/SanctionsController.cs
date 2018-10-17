@@ -32,11 +32,14 @@ namespace SanctionsApi.Controllers
             var container = new Container();
             container.report.resultSummary.searchtext = string.Join( ",", names.ToArray() );
             container.report.resultSummary.title = "Sanctions Check Report";
+            // ** get version from header container.report.resultSummary.version will be <version>Last Updated 13/04/2018</version>
             container.report.resultSummary.downloaded = System.IO.File.GetLastWriteTime(@"C:\projects\legalcontingency\Sanctions\sanctionsconlist.csv").ToString();
 
             using (TextReader fileReader = System.IO.File.OpenText(@"C:\projects\legalcontingency\Sanctions\sanctionsconlist.csv"))
             {
                 var csv = new CsvReader(fileReader);
+                //** */check column match, log if not 28 columns (email to errors@)
+
                 //csv.Configuration.HasHeaderRecord = false;
                 csv.Configuration.HasHeaderRecord = false;
                 csv.Configuration.MissingFieldFound = null;
@@ -49,6 +52,7 @@ namespace SanctionsApi.Controllers
                             counter++;  
                             record.recordnumber = counter.ToString();
                             container.report.record.Add(record);
+                            //**check obecjt definition */
                         }
                     }
                 }
