@@ -24,20 +24,16 @@ namespace SanctionsApi.Controllers
 //        }
 
         // GET api/values/5
-        [HttpGet("{searchString}")]
-        public ObjectResult Get(string searchString)
+        [HttpGet()]
+        public ObjectResult Get()
         {
+            var names = HttpContext.Request.Query["name"].ToList();
             int counter = 0;
             var container = new Container();
-            container.report.resultSummary.searchtext = searchString;
+            container.report.resultSummary.searchtext = string.Join( ",", names.ToArray() );
             container.report.resultSummary.title = "Sanctions Check Report";
             container.report.resultSummary.downloaded = System.IO.File.GetLastWriteTime(@"C:\projects\legalcontingency\Sanctions\sanctionsconlist.csv").ToString();
-            string[] names = searchString.ToLower().Split(new [] { '#' }, StringSplitOptions.RemoveEmptyEntries);
 
-            //return string.Join(",", id);
-            //string bums = id.ToString();
-            //string bums = string.Join(",", id);
-            
             using (TextReader fileReader = System.IO.File.OpenText(@"C:\projects\legalcontingency\Sanctions\sanctionsconlist.csv"))
             {
                 var csv = new CsvReader(fileReader);
