@@ -8,7 +8,7 @@ using CsvHelper;
 //using CsvHelper.Configuration;
 using System.IO;
 //using System.Text;
-
+using System.Reflection;
 
 namespace SanctionsApi.Controllers
 {
@@ -27,10 +27,10 @@ namespace SanctionsApi.Controllers
         [HttpGet()]
         public ObjectResult Get()
         {
-            var names = HttpContext.Request.Query["name"].ToList();
+            var fullNames = HttpContext.Request.Query["name"].ToList();
             int counter = 0;
             var container = new Container();
-            container.report.resultSummary.searchtext = string.Join( ",", names.ToArray() );
+            container.report.resultSummary.searchtext = string.Join( ",", fullNames );
             container.report.resultSummary.title = "Sanctions Check Report";
             // ** get version from header container.report.resultSummary.version will be <version>Last Updated 13/04/2018</version>
             container.report.resultSummary.downloaded = System.IO.File.GetLastWriteTime(@"C:\projects\legalcontingency\Sanctions\sanctionsconlist.csv").ToString();
@@ -40,15 +40,18 @@ namespace SanctionsApi.Controllers
                 var csv = new CsvReader(fileReader);
                 //** */check column match, log if not 28 columns (email to errors@)
 
-                //csv.Configuration.HasHeaderRecord = false;
-                csv.Configuration.HasHeaderRecord = false;
+                csv.Configuration.HasHeaderRecord = false; 
                 csv.Configuration.MissingFieldFound = null;
                 var allValues = csv.GetRecords<CSV>();
+                
                 foreach (var record in allValues)
                 {
                 // do your stuff   
-                    foreach (var name in names) {
-                        if (isNameInRecord(record, name)) {
+                    foreach (var fullName in fullNames) {
+                        var name = fullName.ToLower().Split(' ');
+                        var maxAllowedScore = name.Length;
+                        if (maxAllowedScore > 2) {maxAllowedScore = 2;}
+                        if (isNameInRecord(record, name, maxAllowedScore)) {
                             counter++;  
                             record.recordnumber = counter.ToString();
                             container.report.record.Add(record);
@@ -82,13 +85,24 @@ namespace SanctionsApi.Controllers
 //        {
 //        }
 
-        private bool isNameInRecord(CSV record, string name) {
-            if (record.Name1.ToLower() == name) {return true;}
-            if (record.Name2.ToLower() == name) {return true;}
-            if (record.Name3.ToLower() == name) {return true;}
-            if (record.Name4.ToLower() == name) {return true;}
-            if (record.Name5.ToLower() == name) {return true;}
-            if (record.Name6.ToLower() == name) {return true;}
+        private bool isNameInRecord(CSV record, string[] name, int maxAllowedScore) {
+            var score = 0;
+            var ignore = "";
+            foreach (PropertyInfo prop in record.GetType().GetProperties())
+            {
+                var propNames = prop.GetValue(record, null).ToString().ToLower().Split(' ');
+                foreach(var propName in propNames) {
+                    foreach (var namePart in name) {
+                        if (string.Equals(propName, namePart) && !ignore.Contains(propName)) {
+                            score ++;               //mark match
+                            ignore += namePart;     //pop name from array
+                        }
+                    }
+                }
+            }
+            if (score >= maxAllowedScore) {
+                return true;
+            }
             return false;
         }
 

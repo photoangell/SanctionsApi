@@ -4,7 +4,6 @@ using CsvHelper.Configuration;
 
 namespace SanctionsApi.Models {
     public class CSV{
-        public string recordnumber {get; set;}
         public string Name6  { get; set; }
         public string Name1 { get; set; }
         public string Name2 { get; set; }
@@ -34,6 +33,7 @@ namespace SanctionsApi.Models {
         public string ListedOn { get; set; }
         public string LastUpdated { get; set; }
         public string GroupID { get; set; }
+        public string recordnumber {get; set;}
     }
 
     public sealed class CSVMap : ClassMap<CSV> {
