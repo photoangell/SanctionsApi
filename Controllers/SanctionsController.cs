@@ -9,6 +9,8 @@ using CsvHelper;
 using System.IO;
 //using System.Text;
 using System.Reflection;
+using Newtonsoft.Json;
+using System.Dynamic;
 
 namespace SanctionsApi.Controllers
 {
@@ -27,43 +29,79 @@ namespace SanctionsApi.Controllers
         [HttpGet()]
         public ObjectResult Get()
         {
-            var fullNames = HttpContext.Request.Query["name"].ToList();
+            List<String> fullNames = HttpContext.Request.Query["name"].ToList();
             int counter = 0;
-            var container = new Container();
+            string file;
+            string delimiter;
+            int headerIndex;
+            Container container = new Container();
+            
             container.report.resultSummary.searchtext = string.Join( ",", fullNames );
             container.report.resultSummary.title = "Sanctions Check Report";
-            // ** get version from header container.report.resultSummary.version will be <version>Last Updated 13/04/2018</version>
             container.report.resultSummary.downloaded = System.IO.File.GetLastWriteTime(@"C:\projects\legalcontingency\Sanctions\sanctionsconlist.csv").ToString();
 
-            using (TextReader fileReader = System.IO.File.OpenText(@"C:\projects\legalcontingency\Sanctions\sanctionsconlist.csv"))
+            if (HttpContext.Request.Query["sanctionsList"] == "eu") 
             {
-                var csv = new CsvReader(fileReader);
-                //** */check column match, log if not 28 columns (email to errors@)
+                file = @"C:\projects\legalcontingency\Sanctions\EUSanctions.csv";
+                delimiter = ";";
+                headerIndex = 1;
+            } else {
+                file = @"C:\projects\legalcontingency\Sanctions\sanctionsconlist.csv";
+                delimiter = ",";
+                headerIndex = 2;
+            }   
 
-                csv.Configuration.HasHeaderRecord = false; 
-                csv.Configuration.MissingFieldFound = null;
-                var allValues = csv.GetRecords<CSV>();
+            TextReader fileReader = System.IO.File.OpenText(file);
+            
+            var parser = new CsvParser( fileReader );
+            //csv.Configuration.HasHeaderRecord = false; 
+            //csv.Configuration.MissingFieldFound = null;
+            parser.Configuration.BadDataFound = null;
+            parser.Configuration.Delimiter = delimiter;
+            
+            var i = 0;
+            var headerFields = new List<string>();
+            while( true )
+            {
+                i++;
+                var row = parser.Read();
+                if (row == null) {break;}
+
+                if (i == 1 && row[0] == "Last Updated") {  // for uk sanctions check
+                    container.report.resultSummary.version = row[0] + ' ' + row[1];
+                }
+
+                if (i == headerIndex ) {
+                    //get header values
+                    foreach (var field in row) {
+                        headerFields.Add(field);
+                    }
+                }
                 
-                foreach (var record in allValues)
-                {
-                // do your stuff   
-                    foreach (var fullName in fullNames) {
-                        var name = fullName.ToLower().Split(' ');
-                        var maxAllowedScore = name.Length;
-                        if (maxAllowedScore > 2) {maxAllowedScore = 2;}
-                        if (isNameInRecord(record, name, maxAllowedScore)) {
-                            counter++;  
-                            record.recordnumber = counter.ToString();
-                            container.report.record.Add(record);
-                            //**check obecjt definition */
+                foreach (var fullName in fullNames) {
+                    var name = fullName.ToLower().Split(' ');
+                    var maxAllowedScore = name.Length;
+                    if (maxAllowedScore > 2) {maxAllowedScore = 2;}
+                    if (isNameInRecordStringArray(row, name, maxAllowedScore)) {
+                        counter++;  
+                        Dictionary<string, string> foundRecord = new Dictionary<string, string>();
+                        
+                        var headerFieldsCount = headerFields.Count;
+                        for (var i2 = 0; i2 < headerFieldsCount; i2++) {
+                            var tempField = "";
+                            if (foundRecord.ContainsKey(headerFields[i2])) {
+                                tempField = "_" + i2.ToString();
+                            }
+                            if (i2 <= row.Length) {
+                                foundRecord.Add(headerFields[i2] + tempField, row[i2]);
+                            }
                         }
+                        container.report.record.Add(foundRecord);
                     }
                 }
             }
-            //var records = csv.GetRecords<MyClass>();
-            container.report.resultSummary.numberOfResults = counter;
 
-           
+            container.report.resultSummary.numberOfResults = counter;
             return new ObjectResult(container);
         }
 
@@ -85,7 +123,7 @@ namespace SanctionsApi.Controllers
 //        {
 //        }
 
-        private bool isNameInRecord(CSV record, string[] name, int maxAllowedScore) {
+        private bool isNameInRecord(string[] record, string[] name, int maxAllowedScore) {
             var score = 0;
             var ignore = "";
             foreach (PropertyInfo prop in record.GetType().GetProperties())
@@ -94,6 +132,26 @@ namespace SanctionsApi.Controllers
                 foreach(var propName in propNames) {
                     foreach (var namePart in name) {
                         if (string.Equals(propName, namePart) && !ignore.Contains(propName)) {
+                            score ++;               //mark match
+                            ignore += namePart;     //pop name from array
+                        }
+                    }
+                }
+            }
+            if (score >= maxAllowedScore) {
+                return true;
+            }
+            return false;
+        }
+        private bool isNameInRecordStringArray(string[] record, string[] name, int maxAllowedScore) {
+            var score = 0;
+            var ignore = "";
+            foreach (var field in record)
+            {
+                var fieldWords = field.ToString().ToLower().Split(' ');
+                foreach(var fieldWord in fieldWords) {
+                    foreach (var namePart in name) {
+                        if (string.Equals(fieldWord, namePart) && !ignore.Contains(namePart)) {
                             score ++;               //mark match
                             ignore += namePart;     //pop name from array
                         }
