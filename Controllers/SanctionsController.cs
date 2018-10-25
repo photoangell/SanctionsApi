@@ -11,6 +11,7 @@ using System.Text;
 using System.Reflection;
 using Newtonsoft.Json;
 using System.Dynamic;
+using Microsoft.Extensions.Options;
 
 namespace SanctionsApi.Controllers
 {
@@ -18,12 +19,6 @@ namespace SanctionsApi.Controllers
     [ApiController]
     public class SanctionsController : ControllerBase
     {
-        // GET api/values
-//        [HttpGet]
-//        public ActionResult<IEnumerable<string>> Get()
-//        {
-//            return new string[] { "value1", "value2" };
-//        }
 
         // GET api/values/5
         [HttpGet()]
@@ -36,6 +31,7 @@ namespace SanctionsApi.Controllers
             string delimiter;
             int headerIndex;
             Container container = new Container();
+            //string SanctionList = GetConnectionString();
             
             container.report.resultSummary.searchtext = string.Join( ",", fullNames );
             container.report.resultSummary.title = "Sanctions Check Report";
@@ -121,6 +117,13 @@ namespace SanctionsApi.Controllers
 //        [HttpDelete("{id}")]
 //        public void Delete(int id)
 //        {
+//        }
+
+        // GET api/values
+//        [HttpGet]
+//        public ActionResult<IEnumerable<string>> Get()
+//        {
+//            return new string[] { "value1", "value2" };
 //        }
 
         private bool isNameInRecord(string[] record, string[] name, int maxAllowedScore) {
