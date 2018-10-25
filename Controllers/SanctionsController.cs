@@ -11,7 +11,7 @@ using System.Text;
 using System.Reflection;
 using Newtonsoft.Json;
 using System.Dynamic;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Configuration;
 
 namespace SanctionsApi.Controllers
 {
@@ -19,6 +19,13 @@ namespace SanctionsApi.Controllers
     [ApiController]
     public class SanctionsController : ControllerBase
     {
+        private readonly IConfiguration Configuration;
+
+        public SanctionsController(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+        public IEnumerable<KeyValuePair<string, string>> FilteredConfiguration { get; private set; }
 
         // GET api/values/5
         [HttpGet()]
@@ -27,24 +34,30 @@ namespace SanctionsApi.Controllers
         {
             List<String> fullNames = HttpContext.Request.Query["name"].ToList();
             int counter = 0;
-            string file;
-            string delimiter;
-            int headerIndex;
+            string file = "";
+            string delimiter = "";
+            string encoding = "";
+            int headerIndex = 0;
             Container container = new Container();
-            //string SanctionList = GetConnectionString();
-            
+ 
+            var config = Configuration.AsEnumerable();
+             foreach (KeyValuePair<string,string> kvp in config) {
+                if (kvp.Key == "SanctionLists:" + HttpContext.Request.Query["sanctionsList"] + ":FileName") {
+                    file = System.IO.Directory.GetCurrentDirectory() + @"\" + kvp.Value;
+                }
+                if (kvp.Key == "SanctionLists:" + HttpContext.Request.Query["sanctionsList"] + ":Delimiter") {
+                    delimiter = kvp.Value;
+                }
+                if (kvp.Key == "SanctionLists:" + HttpContext.Request.Query["sanctionsList"] + ":HeaderIndex") {
+                    headerIndex = Int32.Parse(kvp.Value);
+                }
+                if (kvp.Key == "SanctionLists:" + HttpContext.Request.Query["sanctionsList"] + ":Encoding") {
+                    encoding = kvp.Value;
+                }
+                
+            }
             container.report.resultSummary.searchtext = string.Join( ",", fullNames );
             container.report.resultSummary.title = "Sanctions Check Report";
-            if (HttpContext.Request.Query["sanctionsList"] == "eu") 
-            {
-                file = System.IO.Directory.GetCurrentDirectory() + @"\EUSanctions.csv";
-                delimiter = ";";
-                headerIndex = 1;
-            } else {
-                file = System.IO.Directory.GetCurrentDirectory() + @"\sanctionsconlist.csv";
-                delimiter = ",";
-                headerIndex = 2;
-            }   
             container.report.resultSummary.downloaded = System.IO.File.GetLastWriteTime(file).ToString();
             
             using (StreamReader fileReader = new StreamReader(file, Encoding.GetEncoding("iso-8859-1")))
