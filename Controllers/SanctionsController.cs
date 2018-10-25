@@ -7,14 +7,14 @@ using SanctionsApi.Models;
 using CsvHelper;
 //using CsvHelper.Configuration;
 using System.IO;
-//using System.Text;
+using System.Text;
 using System.Reflection;
 using Newtonsoft.Json;
 using System.Dynamic;
 
 namespace SanctionsApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class SanctionsController : ControllerBase
     {
@@ -27,6 +27,7 @@ namespace SanctionsApi.Controllers
 
         // GET api/values/5
         [HttpGet()]
+        [Produces("application/json")]
         public ObjectResult Get()
         {
             List<String> fullNames = HttpContext.Request.Query["name"].ToList();
@@ -38,69 +39,68 @@ namespace SanctionsApi.Controllers
             
             container.report.resultSummary.searchtext = string.Join( ",", fullNames );
             container.report.resultSummary.title = "Sanctions Check Report";
-            container.report.resultSummary.downloaded = System.IO.File.GetLastWriteTime(@"C:\projects\legalcontingency\Sanctions\sanctionsconlist.csv").ToString();
-
             if (HttpContext.Request.Query["sanctionsList"] == "eu") 
             {
-                file = @"C:\projects\legalcontingency\Sanctions\EUSanctions.csv";
+                file = System.IO.Directory.GetCurrentDirectory() + @"\EUSanctions.csv";
                 delimiter = ";";
                 headerIndex = 1;
             } else {
-                file = @"C:\projects\legalcontingency\Sanctions\sanctionsconlist.csv";
+                file = System.IO.Directory.GetCurrentDirectory() + @"\sanctionsconlist.csv";
                 delimiter = ",";
                 headerIndex = 2;
             }   
-
-            TextReader fileReader = System.IO.File.OpenText(file);
+            container.report.resultSummary.downloaded = System.IO.File.GetLastWriteTime(file).ToString();
             
-            var parser = new CsvParser( fileReader );
-            //csv.Configuration.HasHeaderRecord = false; 
-            //csv.Configuration.MissingFieldFound = null;
-            parser.Configuration.BadDataFound = null;
-            parser.Configuration.Delimiter = delimiter;
-            
-            var i = 0;
-            var headerFields = new List<string>();
-            while( true )
+            using (StreamReader fileReader = new StreamReader(file, Encoding.GetEncoding("iso-8859-1")))
             {
-                i++;
-                var row = parser.Read();
-                if (row == null) {break;}
-
-                if (i == 1 && row[0] == "Last Updated") {  // for uk sanctions check
-                    container.report.resultSummary.version = row[0] + ' ' + row[1];
-                }
-
-                if (i == headerIndex ) {
-                    //get header values
-                    foreach (var field in row) {
-                        headerFields.Add(field);
-                    }
-                }
+                var parser = new CsvParser( fileReader );
+                //csv.Configuration.HasHeaderRecord = false; 
+                //csv.Configuration.MissingFieldFound = null;
+                parser.Configuration.BadDataFound = null;
+                parser.Configuration.Delimiter = delimiter;
                 
-                foreach (var fullName in fullNames) {
-                    var name = fullName.ToLower().Split(' ');
-                    var maxAllowedScore = name.Length;
-                    if (maxAllowedScore > 2) {maxAllowedScore = 2;}
-                    if (isNameInRecordStringArray(row, name, maxAllowedScore)) {
-                        counter++;  
-                        Dictionary<string, string> foundRecord = new Dictionary<string, string>();
-                        
-                        var headerFieldsCount = headerFields.Count;
-                        for (var i2 = 0; i2 < headerFieldsCount; i2++) {
-                            var tempField = "";
-                            if (foundRecord.ContainsKey(headerFields[i2])) {
-                                tempField = "_" + i2.ToString();
-                            }
-                            if (i2 <= row.Length) {
-                                foundRecord.Add(headerFields[i2] + tempField, row[i2]);
-                            }
+                var i = 0;
+                var headerFields = new List<string>();
+                while( true )
+                {
+                    i++;
+                    var row = parser.Read();
+                    if (row == null) {break;}
+
+                    if (i == 1 && row[0] == "Last Updated") {  // for uk sanctions check
+                        container.report.resultSummary.version = row[0] + ' ' + row[1];
+                    }
+
+                    if (i == headerIndex ) {
+                        //get header values
+                        foreach (var field in row) {
+                            headerFields.Add(field);
                         }
-                        container.report.record.Add(foundRecord);
+                    }
+                    
+                    foreach (var fullName in fullNames) {
+                        var name = fullName.ToLower().Split(' ');
+                        var maxAllowedScore = name.Length;
+                        if (maxAllowedScore > 2) {maxAllowedScore = 2;}
+                        if (isNameInRecordStringArray(row, name, maxAllowedScore)) {
+                            counter++;  
+                            Dictionary<string, string> foundRecord = new Dictionary<string, string>();
+                            
+                            var headerFieldsCount = headerFields.Count;
+                            for (var i2 = 0; i2 < headerFieldsCount; i2++) {
+                                var tempField = "";
+                                if (foundRecord.ContainsKey(headerFields[i2])) {
+                                    tempField = "_" + i2.ToString();
+                                }
+                                if (i2 <= row.Length) {
+                                    foundRecord.Add(headerFields[i2] + tempField, row[i2]);
+                                }
+                            }
+                            container.report.record.Add(foundRecord);
+                        }
                     }
                 }
             }
-
             container.report.resultSummary.numberOfResults = counter;
             return new ObjectResult(container);
         }
