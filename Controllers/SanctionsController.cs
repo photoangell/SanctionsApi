@@ -101,7 +101,7 @@ namespace SanctionsApi.Controllers
                                 if (foundRecord.ContainsKey(headerFields[i2])) {
                                     tempField = "_" + i2.ToString();
                                 }
-                                if (i2 <= row.Length) {
+                                if (i2 < row.Length) {
                                     foundRecord.Add(headerFields[i2] + tempField, row[i2]);
                                 }
                             }
