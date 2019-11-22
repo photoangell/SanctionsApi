@@ -1,6 +1,4 @@
-using System;
 using CsvHelper.Configuration;
-//using FluentNHibernate.Mapping;
 
 namespace SanctionsApi.Models {
     public class CSV{

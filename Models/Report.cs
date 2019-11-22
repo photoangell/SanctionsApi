@@ -1,9 +1,7 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Dynamic;
 
-namespace SanctionsApi.Models {
+namespace SanctionsApi.Models
+{
     public class Report{
         //properties
         public ResultSummary resultSummary;

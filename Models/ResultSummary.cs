@@ -1,6 +1,5 @@
-using System;
-
-namespace SanctionsApi.Models {
+namespace SanctionsApi.Models
+{
     public class ResultSummary{
 		//properties
         public string title;
