@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -70,17 +70,16 @@ namespace SanctionsApi.Controllers
 
                 foreach (var fullName in _fullNames)
                 {
-                    if (IsFullNameInRow(fullName, row)) {
+                    if (IsFullNameInRow(fullName, row))
+                    {
                         AddRowToReport(row);
                         break;
                     }
                 }
                 row = parser.Read();
-            } 
+            }
 
-            _container.report.resultSummary.title = "Sanctions Check Report";
-            _container.report.resultSummary.searchtext = String.Join(",", _fullNames);
-            _container.report.resultSummary.downloaded = System.IO.File.GetLastWriteTime(_reportParams.File).ToString();
+            WriteReportSummary();
             return _container;
         }
 
@@ -155,5 +154,11 @@ namespace SanctionsApi.Controllers
             return nameList;
         }
 
+        private void WriteReportSummary()
+        {
+            _container.report.resultSummary.title = "Sanctions Check Report";
+            _container.report.resultSummary.searchtext = String.Join(",", _fullNames);
+            _container.report.resultSummary.downloaded = System.IO.File.GetLastWriteTime(_reportParams.File).ToString();
+        }
     }
 }
