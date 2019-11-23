@@ -37,8 +37,6 @@ namespace SanctionsApi.Models {
     public sealed class CSVMap : ClassMap<CSV> {
         public CSVMap()
         {
-            //Map( m => m.Id )).Name( "id" )).Name( "" );
-            
             Map( m => m.Name1).Name( "Name 1" );
             Map( m => m.Name6).Name( "Name 6" );
             Map( m => m.Name2).Name( "Name 2" );
