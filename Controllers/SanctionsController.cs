@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -17,9 +17,12 @@ namespace SanctionsApi.Controllers
     {
         private readonly IConfiguration Configuration;
         private List<FullName> _fullNames = new List<FullName>();
+        private Container _container = new Container();
+
         public SanctionsController(IConfiguration configuration)
         {
             Configuration = configuration;
+            
         }
 
         [HttpGet]
@@ -31,7 +34,6 @@ namespace SanctionsApi.Controllers
             string delimiter = "";
             string encoding = "";
             int headerIndex = 0;
-            Container container = new Container();
  
             var config = Configuration.AsEnumerable();
              foreach (KeyValuePair<string,string> kvp in config) {
@@ -49,9 +51,6 @@ namespace SanctionsApi.Controllers
                 }
                 
             }
-            container.report.resultSummary.searchtext = String.Join( ",", _fullNames);
-            container.report.resultSummary.title = "Sanctions Check Report";
-            container.report.resultSummary.downloaded = System.IO.File.GetLastWriteTime(file).ToString();
             
             using (StreamReader fileReader = new StreamReader(file, Encoding.GetEncoding("iso-8859-1")))
             {
@@ -70,7 +69,7 @@ namespace SanctionsApi.Controllers
                     if (row == null) {break;}
 
                     if (i == 1 && row[0] == "Last Updated") {  // for uk sanctions check
-                        container.report.resultSummary.version = row[0] + ' ' + row[1];
+                        _container.report.resultSummary.version = row[0] + ' ' + row[1];
                     }
 
                     if (i == headerIndex ) {
@@ -97,13 +96,17 @@ namespace SanctionsApi.Controllers
                                     foundRecord.Add(headerFields[i2] + tempField, row[i2]);
                                 }
                             }
-                            container.report.record.Add(foundRecord);
+                            _container.report.record.Add(foundRecord);
                         }
                     }
                 }
             }
-            container.report.resultSummary.numberOfResults = counter;
-            return container;
+
+            _container.report.resultSummary.title = "Sanctions Check Report";
+            _container.report.resultSummary.searchtext = String.Join( ",", _fullNames);
+            _container.report.resultSummary.downloaded = System.IO.File.GetLastWriteTime(file).ToString();
+            _container.report.resultSummary.numberOfResults = counter;
+            return _container;
         }
 
 
