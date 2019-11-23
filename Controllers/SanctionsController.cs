@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -80,7 +80,7 @@ namespace SanctionsApi.Controllers
 
                     foreach (var fullName in _fullNames)
                     {
-                        if (IsFullNameInRow(fullName, row))
+                    if (IsFullNameInRow(fullName, row)) {
                             AddRowToReport(row);
                         break;
                     }
