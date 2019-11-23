@@ -27,7 +27,7 @@ name.Add("vlad");
 	});
 
 
-	row.Dump();
+	row.Dump("row to look at");
 
 	row.SelectMany(r => r.Split(' '))
 		.Distinct()
@@ -48,7 +48,7 @@ name.Add("vlad");
 		.Count()
 		.Dump();
 
-
+	
 
 }
 
