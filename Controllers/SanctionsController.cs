@@ -34,23 +34,16 @@ namespace SanctionsApi.Controllers
             foreach (KeyValuePair<string, string> kvp in config)
             {
                 if (kvp.Key == "SanctionLists:" + HttpContext.Request.Query["sanctionsList"] + ":FileName")
-                {
                     _reportParams.File = System.IO.Directory.GetCurrentDirectory() + @"\" + kvp.Value;
-                }
                 if (kvp.Key == "SanctionLists:" + HttpContext.Request.Query["sanctionsList"] + ":Delimiter")
-                {
                     _reportParams.Delimiter = kvp.Value;
-                }
                 if (kvp.Key == "SanctionLists:" + HttpContext.Request.Query["sanctionsList"] + ":HeaderIndex")
-                {
                     _reportParams.HeaderIndex = Int32.Parse(kvp.Value);
-                }
                 if (kvp.Key == "SanctionLists:" + HttpContext.Request.Query["sanctionsList"] + ":Encoding")
                 {
                     //TODO: Why is this not used?
                     _reportParams.Encoding = kvp.Value;
                 }
-
             }
 
             using var fileReader = new StreamReader(_reportParams.File, Encoding.GetEncoding("iso-8859-1"));
@@ -61,7 +54,6 @@ namespace SanctionsApi.Controllers
 
             for (var i = 1; row != null; i++)
             {
-
                 if (i == 1 && row[0] == "Last Updated") // for uk sanctions check
                     _container.report.resultSummary.version = row[0] + ' ' + row[1];
 
