@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -55,8 +55,6 @@ namespace SanctionsApi.Controllers
 
             using var fileReader = new StreamReader(_reportParams.File, Encoding.GetEncoding("iso-8859-1"));
             var parser = new CsvParser(fileReader);
-            //csv.Configuration.HasHeaderRecord = false; 
-            //csv.Configuration.MissingFieldFound = null;
             parser.Configuration.BadDataFound = null;
             parser.Configuration.Delimiter = _reportParams.Delimiter;
             var row = parser.Read();
