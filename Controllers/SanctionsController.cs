@@ -62,14 +62,10 @@ namespace SanctionsApi.Controllers
             //csv.Configuration.MissingFieldFound = null;
             parser.Configuration.BadDataFound = null;
             parser.Configuration.Delimiter = delimiter;
+            var row = parser.Read();
 
-            var i = 0;
-            while (true)
+            for (var i = 1; row != null; i++)
             {
-                i++;
-                var row = parser.Read();
-                if (row == null)
-                    break;
 
                 if (i == 1 && row[0] == "Last Updated") // for uk sanctions check
                     _container.report.resultSummary.version = row[0] + ' ' + row[1];
@@ -84,7 +80,8 @@ namespace SanctionsApi.Controllers
                         break;
                     }
                 }
-            }
+                row = parser.Read();
+            } 
 
             _container.report.resultSummary.title = "Sanctions Check Report";
             _container.report.resultSummary.searchtext = String.Join(",", _fullNames);
