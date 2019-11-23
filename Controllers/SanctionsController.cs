@@ -132,12 +132,11 @@ namespace SanctionsApi.Controllers
         private bool IsFullNameInRow(FullName fullName, string[] row) {
             var score = 0;
             var ignore = "";
-            foreach (var field in row)
+            foreach (var col in row)
             {
-                var fieldWords = field.ToString().ToLower().Split(' ');
-                foreach(var fieldWord in fieldWords) {
+                foreach(var word in col.ToString().ToLower().Split(' ')) {
                     foreach (var name in fullName.Name) {
-                        if (string.Equals(fieldWord, name) && !ignore.Contains(name)) {
+                        if (string.Equals(word, name) && !ignore.Contains(name)) {
                             score ++;               //mark match
                             ignore += name;     //pop name from array
                         }
