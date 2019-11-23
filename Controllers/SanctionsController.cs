@@ -18,6 +18,7 @@ namespace SanctionsApi.Controllers
         private readonly IConfiguration Configuration;
         private List<FullName> _fullNames = new List<FullName>();
         private Container _container = new Container();
+        private ReportParameters _reportParams = new ReportParameters();
 
         public SanctionsController(IConfiguration configuration)
         {
@@ -61,7 +62,6 @@ namespace SanctionsApi.Controllers
                 parser.Configuration.Delimiter = delimiter;
                 
                 var i = 0;
-                var headerFields = new List<string>();
                 while( true )
                 {
                     i++;
@@ -72,27 +72,20 @@ namespace SanctionsApi.Controllers
                         _container.report.resultSummary.version = row[0] + ' ' + row[1];
                     }
 
-                    if (i == headerIndex ) {
-                        //get header values
-                        foreach (var field in row) {
-                            headerFields.Add(field);
-                        }
-                    }
+                    if (i == headerIndex) 
+                        RecordHeaderFields(row);
                     
                     foreach (var fullName in _fullNames) {
                         if (IsFullNameInRow(fullName, row)) {
                             counter++;  
-                            Dictionary<string, string> foundRecord = new Dictionary<string, string>();
+                            var foundRecord = new Dictionary<string, string>();
                             
-                            var headerFieldsCount = headerFields.Count;
-                            for (var i2 = 0; i2 < headerFieldsCount; i2++) {
+                            for (var i2 = 0; i2 < _reportParams.HeaderFields.Count; i2++) {
                                 var tempField = "";
-                                if (foundRecord.ContainsKey(headerFields[i2])) {
+                                if (foundRecord.ContainsKey(_reportParams.HeaderFields[i2])) 
                                     tempField = "_" + i2.ToString();
-                                }
-                                if (i2 < row.Length) {
-                                    foundRecord.Add(headerFields[i2] + tempField, row[i2]);
-                                }
+                                if (i2 < row.Length) 
+                                    foundRecord.Add(_reportParams.HeaderFields[i2] + tempField, row[i2]);
                             }
                             _container.report.record.Add(foundRecord);
                         }
@@ -128,6 +121,11 @@ namespace SanctionsApi.Controllers
         //     }
         //     return false;
         // }
+
+        private void RecordHeaderFields(string[] row) {
+            foreach (var field in row) 
+                _reportParams.HeaderFields.Add(field);
+        }
 
         private bool IsFullNameInRow(FullName fullName, string[] row) {
             var countMatchedNames = row.SelectMany(r => r.Split(' '))
