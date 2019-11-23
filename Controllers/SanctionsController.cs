@@ -16,7 +16,7 @@ namespace SanctionsApi.Controllers
     public class SanctionsController : ControllerBase
     {
         private readonly IConfiguration Configuration;
-
+        private List<FullName> _fullNames = new List<FullName>();
         public SanctionsController(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -25,7 +25,7 @@ namespace SanctionsApi.Controllers
         [HttpGet]
         public Container Get()
         {
-            List<String> fullNames = HttpContext.Request.Query["name"].ToList();
+            ExtractNamesFromQueryString();
             int counter = 0;
             string file = "";
             string delimiter = "";
@@ -49,7 +49,7 @@ namespace SanctionsApi.Controllers
                 }
                 
             }
-            container.report.resultSummary.searchtext = string.Join( ",", fullNames );
+            container.report.resultSummary.searchtext = String.Join( ",", _fullNames);
             container.report.resultSummary.title = "Sanctions Check Report";
             container.report.resultSummary.downloaded = System.IO.File.GetLastWriteTime(file).ToString();
             
@@ -80,11 +80,10 @@ namespace SanctionsApi.Controllers
                         }
                     }
                     
-                    foreach (var fullName in fullNames) {
-                        var name = fullName.ToLower().Split(' ');
-                        var maxAllowedScore = name.Length;
-                        if (maxAllowedScore > 2) {maxAllowedScore = 2;}
-                        if (isNameInRecordStringArray(row, name, maxAllowedScore)) {
+                    foreach (var fullName in _fullNames) {
+                        var maxAllowedScore = fullName.Name.Count;
+                        if (maxAllowedScore > 2) maxAllowedScore = 2;
+                        if (isNameInRecordStringArray(row, fullName, maxAllowedScore)) {
                             counter++;  
                             Dictionary<string, string> foundRecord = new Dictionary<string, string>();
                             
@@ -108,17 +107,17 @@ namespace SanctionsApi.Controllers
         }
 
 
-        private bool isNameInRecord(string[] record, string[] name, int maxAllowedScore) {
+        private bool isNameInRecord(string[] record, FullName fullName, int maxAllowedScore) {
             var score = 0;
             var ignore = "";
             foreach (PropertyInfo prop in record.GetType().GetProperties())
             {
                 var propNames = prop.GetValue(record, null).ToString().ToLower().Split(' ');
                 foreach(var propName in propNames) {
-                    foreach (var namePart in name) {
-                        if (string.Equals(propName, namePart) && !ignore.Contains(propName)) {
+                    foreach (var name in fullName.Name) {
+                        if (string.Equals(propName, name) && !ignore.Contains(propName)) {
                             score ++;               //mark match
-                            ignore += namePart;     //pop name from array
+                            ignore += name;     //pop name from array
                         }
                     }
                 }
@@ -128,17 +127,17 @@ namespace SanctionsApi.Controllers
             }
             return false;
         }
-        private bool isNameInRecordStringArray(string[] record, string[] name, int maxAllowedScore) {
+        private bool isNameInRecordStringArray(string[] record, FullName fullName, int maxAllowedScore) {
             var score = 0;
             var ignore = "";
             foreach (var field in record)
             {
                 var fieldWords = field.ToString().ToLower().Split(' ');
                 foreach(var fieldWord in fieldWords) {
-                    foreach (var namePart in name) {
-                        if (string.Equals(fieldWord, namePart) && !ignore.Contains(namePart)) {
+                    foreach (var name in fullName.Name) {
+                        if (string.Equals(fieldWord, name) && !ignore.Contains(name)) {
                             score ++;               //mark match
-                            ignore += namePart;     //pop name from array
+                            ignore += name;     //pop name from array
                         }
                     }
                 }
@@ -147,6 +146,18 @@ namespace SanctionsApi.Controllers
                 return true;
             }
             return false;
+        }
+        
+        private void ExtractNamesFromQueryString() {
+            foreach (var fullName in HttpContext.Request.Query["name"].ToList()) 
+                _fullNames.Add(SplitFullNameIntoList(fullName));
+        }
+
+        private FullName SplitFullNameIntoList(string fullName) {
+            var nameList = new FullName();
+            foreach (var name in fullName.ToLower().Split(' ')) 
+                nameList.Name.Add(name);
+            return nameList;
         }
 
     }
