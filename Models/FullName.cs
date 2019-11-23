@@ -9,6 +9,6 @@ namespace SanctionsApi.Models
         public override string ToString() {
             return String.Join(" ", Name);
         }
-        public int MaxAllowedScore => Name.Count > 2 ? 2 : Name.Count;
+        public int MaxAllowedCount => Name.Count > 2 ? 2 : Name.Count;
     }
 }
