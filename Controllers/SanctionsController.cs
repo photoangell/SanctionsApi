@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +29,6 @@ namespace SanctionsApi.Controllers
         public Container Get()
         {
             ExtractNamesFromQueryString();
-            int counter = 0;
             string file = "";
             string delimiter = "";
             string encoding = "";
@@ -57,31 +56,31 @@ namespace SanctionsApi.Controllers
 
             }
 
-            using (StreamReader fileReader = new StreamReader(file, Encoding.GetEncoding("iso-8859-1")))
+            using var fileReader = new StreamReader(file, Encoding.GetEncoding("iso-8859-1"));
+            var parser = new CsvParser(fileReader);
+            //csv.Configuration.HasHeaderRecord = false; 
+            //csv.Configuration.MissingFieldFound = null;
+            parser.Configuration.BadDataFound = null;
+            parser.Configuration.Delimiter = delimiter;
+
+            var i = 0;
+            while (true)
             {
-                var parser = new CsvParser(fileReader);
-                //csv.Configuration.HasHeaderRecord = false; 
-                //csv.Configuration.MissingFieldFound = null;
-                parser.Configuration.BadDataFound = null;
-                parser.Configuration.Delimiter = delimiter;
+                i++;
+                var row = parser.Read();
+                if (row == null)
+                    break;
 
-                var i = 0;
-                while (true)
+                if (i == 1 && row[0] == "Last Updated") // for uk sanctions check
+                    _container.report.resultSummary.version = row[0] + ' ' + row[1];
+
+                if (i == headerIndex)
+                    RecordHeaderFields(row);
+
+                foreach (var fullName in _fullNames)
                 {
-                    i++;
-                    var row = parser.Read();
-                    if (row == null) { break; }
-
-                    if (i == 1 && row[0] == "Last Updated") // for uk sanctions check
-                        _container.report.resultSummary.version = row[0] + ' ' + row[1];
-
-                    if (i == headerIndex)
-                        RecordHeaderFields(row);
-
-                    foreach (var fullName in _fullNames)
-                    {
                     if (IsFullNameInRow(fullName, row)) {
-                            AddRowToReport(row);
+                        AddRowToReport(row);
                         break;
                     }
                 }
