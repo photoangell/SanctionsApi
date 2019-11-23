@@ -130,20 +130,15 @@ namespace SanctionsApi.Controllers
         // }
 
         private bool IsFullNameInRow(FullName fullName, string[] row) {
-            var score = 0;
-            var ignore = "";
-            foreach (var col in row)
-            {
-                foreach(var word in col.ToString().ToLower().Split(' ')) {
-                    foreach (var name in fullName.Name) {
-                        if (string.Equals(word, name) && !ignore.Contains(name)) {
-                            score ++;               //mark match
-                            ignore += name;     //pop name from array
-                        }
-                    }
-                }
-            }
-            return (score >= fullName.MaxAllowedScore);
+            var countMatchedNames = row.SelectMany(r => r.Split(' '))
+		        .Distinct()
+		        .Join(fullName.Name,
+		            r => r.ToLower(),
+		            n => n.ToLower(),
+		            (r, n) => new {r})
+		        .Count();
+
+            return (countMatchedNames >= fullName.MaxAllowedCount);
         }
 
         private void ExtractNamesFromQueryString() {
