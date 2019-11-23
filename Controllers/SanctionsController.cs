@@ -57,28 +57,6 @@ namespace SanctionsApi.Controllers
             return _container;
         }
 
-
-        // private bool isNameInRecord(string[] record, FullName fullName, int maxAllowedScore) {
-        //     var score = 0;
-        //     var ignore = "";
-        //     foreach (PropertyInfo prop in record.GetType().GetProperties())
-        //     {
-        //         var propNames = prop.GetValue(record, null).ToString().ToLower().Split(' ');
-        //         foreach(var propName in propNames) {
-        //             foreach (var name in fullName.Name) {
-        //                 if (string.Equals(propName, name) && !ignore.Contains(propName)) {
-        //                     score ++;               //mark match
-        //                     ignore += name;     //pop name from array
-        //                 }
-        //             }
-        //         }
-        //     }
-        //     if (score >= maxAllowedScore) {
-        //         return true;
-        //     }
-        //     return false;
-        // }
-
         private void ExtractNamesFromQueryString()
         {
             foreach (var fullName in Request.Query["name"].ToList())
@@ -137,6 +115,7 @@ namespace SanctionsApi.Controllers
 
             for (var i = 0; i < _reportParams.HeaderFields.Count; i++)
             {
+                //TODO: this feels messy, cleaner way of doing this???
                 var tempField = "";
                 if (foundRecord.ContainsKey(_reportParams.HeaderFields[i]))
                     tempField = "_" + i.ToString();
