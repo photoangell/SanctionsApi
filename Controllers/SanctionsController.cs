@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -34,7 +34,7 @@ namespace SanctionsApi.Controllers
             string delimiter = "";
             string encoding = "";
             int headerIndex = 0;
- 
+            
             var config = Configuration.AsEnumerable();
              foreach (KeyValuePair<string,string> kvp in config) {
                 if (kvp.Key == "SanctionLists:" + HttpContext.Request.Query["sanctionsList"] + ":FileName") {
@@ -82,7 +82,7 @@ namespace SanctionsApi.Controllers
                     foreach (var fullName in _fullNames) {
                         var maxAllowedScore = fullName.Name.Count;
                         if (maxAllowedScore > 2) maxAllowedScore = 2;
-                        if (isNameInRecordStringArray(row, fullName, maxAllowedScore)) {
+                        if (IsFullNameInRecord(row, fullName, maxAllowedScore)) {
                             counter++;  
                             Dictionary<string, string> foundRecord = new Dictionary<string, string>();
                             
@@ -130,7 +130,7 @@ namespace SanctionsApi.Controllers
             }
             return false;
         }
-        private bool isNameInRecordStringArray(string[] record, FullName fullName, int maxAllowedScore) {
+        private bool IsFullNameInRecord(string[] record, FullName fullName, int maxAllowedScore) {
             var score = 0;
             var ignore = "";
             foreach (var field in record)
@@ -145,10 +145,7 @@ namespace SanctionsApi.Controllers
                     }
                 }
             }
-            if (score >= maxAllowedScore) {
-                return true;
-            }
-            return false;
+            return (score >= maxAllowedScore);
         }
 
         private void ExtractNamesFromQueryString() {
