@@ -29,39 +29,36 @@ namespace SanctionsApi.Controllers
         public Container Get()
         {
             ExtractNamesFromQueryString();
-            string file = "";
-            string delimiter = "";
-            string encoding = "";
-            int headerIndex = 0;
 
             var config = Configuration.AsEnumerable();
             foreach (KeyValuePair<string, string> kvp in config)
             {
                 if (kvp.Key == "SanctionLists:" + HttpContext.Request.Query["sanctionsList"] + ":FileName")
                 {
-                    file = System.IO.Directory.GetCurrentDirectory() + @"\" + kvp.Value;
+                    _reportParams.File = System.IO.Directory.GetCurrentDirectory() + @"\" + kvp.Value;
                 }
                 if (kvp.Key == "SanctionLists:" + HttpContext.Request.Query["sanctionsList"] + ":Delimiter")
                 {
-                    delimiter = kvp.Value;
+                    _reportParams.Delimiter = kvp.Value;
                 }
                 if (kvp.Key == "SanctionLists:" + HttpContext.Request.Query["sanctionsList"] + ":HeaderIndex")
                 {
-                    headerIndex = Int32.Parse(kvp.Value);
+                    _reportParams.HeaderIndex = Int32.Parse(kvp.Value);
                 }
                 if (kvp.Key == "SanctionLists:" + HttpContext.Request.Query["sanctionsList"] + ":Encoding")
                 {
-                    encoding = kvp.Value;
+                    //TODO: Why is this not used?
+                    _reportParams.Encoding = kvp.Value;
                 }
 
             }
 
-            using var fileReader = new StreamReader(file, Encoding.GetEncoding("iso-8859-1"));
+            using var fileReader = new StreamReader(_reportParams.File, Encoding.GetEncoding("iso-8859-1"));
             var parser = new CsvParser(fileReader);
             //csv.Configuration.HasHeaderRecord = false; 
             //csv.Configuration.MissingFieldFound = null;
             parser.Configuration.BadDataFound = null;
-            parser.Configuration.Delimiter = delimiter;
+            parser.Configuration.Delimiter = _reportParams.Delimiter;
             var row = parser.Read();
 
             for (var i = 1; row != null; i++)
@@ -70,7 +67,7 @@ namespace SanctionsApi.Controllers
                 if (i == 1 && row[0] == "Last Updated") // for uk sanctions check
                     _container.report.resultSummary.version = row[0] + ' ' + row[1];
 
-                if (i == headerIndex)
+                if (i == _reportParams.HeaderIndex)
                     RecordHeaderFields(row);
 
                 foreach (var fullName in _fullNames)
@@ -85,7 +82,7 @@ namespace SanctionsApi.Controllers
 
             _container.report.resultSummary.title = "Sanctions Check Report";
             _container.report.resultSummary.searchtext = String.Join(",", _fullNames);
-            _container.report.resultSummary.downloaded = System.IO.File.GetLastWriteTime(file).ToString();
+            _container.report.resultSummary.downloaded = System.IO.File.GetLastWriteTime(_reportParams.File).ToString();
             return _container;
         }
 
