@@ -6,7 +6,6 @@ using SanctionsApi.Models;
 using CsvHelper;
 using System.IO;
 using System.Text;
-using System.Reflection;
 using Microsoft.Extensions.Configuration;
 
 namespace SanctionsApi.Controllers
@@ -30,6 +29,7 @@ namespace SanctionsApi.Controllers
         {
             ExtractNamesFromQueryString();
 
+            //TODO: this should be done at build time!!
             var config = Configuration.AsEnumerable();
             foreach (KeyValuePair<string, string> kvp in config)
             {
