@@ -11,8 +11,8 @@ using Microsoft.Extensions.Configuration;
 
 namespace SanctionsApi.Controllers
 {
-    [Route("[controller]")]
     [ApiController]
+    [Route("[controller]")]
     public class SanctionsController : ControllerBase
     {
         private readonly IConfiguration Configuration;
@@ -21,12 +21,9 @@ namespace SanctionsApi.Controllers
         {
             Configuration = configuration;
         }
-        public IEnumerable<KeyValuePair<string, string>> FilteredConfiguration { get; private set; }
 
-        //object result is being calculated ok, but results not processed correctly.
-        [HttpGet()]
-        [Produces("application/json")]
-        public ObjectResult Get()
+        [HttpGet]
+        public Container Get()
         {
             List<String> fullNames = HttpContext.Request.Query["name"].ToList();
             int counter = 0;
@@ -107,7 +104,7 @@ namespace SanctionsApi.Controllers
                 }
             }
             container.report.resultSummary.numberOfResults = counter;
-            return new ObjectResult(container);
+            return container;
         }
 
 
