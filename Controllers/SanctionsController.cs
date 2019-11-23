@@ -72,10 +72,8 @@ namespace SanctionsApi.Controllers
                     var row = parser.Read();
                     if (row == null) { break; }
 
-                    if (i == 1 && row[0] == "Last Updated")
-                    {  // for uk sanctions check
+                    if (i == 1 && row[0] == "Last Updated") // for uk sanctions check
                         _container.report.resultSummary.version = row[0] + ' ' + row[1];
-                    }
 
                     if (i == headerIndex)
                         RecordHeaderFields(row);
@@ -83,7 +81,8 @@ namespace SanctionsApi.Controllers
                     foreach (var fullName in _fullNames)
                     {
                         if (IsFullNameInRow(fullName, row))
-                            AddFoundRecordToReport(row);
+                            AddRowToReport(row);
+                        break;
                     }
                 }
             }
@@ -135,7 +134,7 @@ namespace SanctionsApi.Controllers
             return (countMatchedNames >= fullName.MaxAllowedCount);
         }
 
-        private void AddFoundRecordToReport(string[] row)
+        private void AddRowToReport(string[] row)
         {
             _container.report.resultSummary.numberOfResults++;
             var foundRecord = new Dictionary<string, string>();
