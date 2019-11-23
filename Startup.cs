@@ -19,10 +19,6 @@ namespace SanctionsApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddCors();
-            //.AddFormatterMappings();
-            //.AddJsonFormatters();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -31,19 +27,13 @@ namespace SanctionsApi
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseCors(builder =>
-                builder.WithOrigins("http://localhost")
-                        .AllowAnyHeader()
-                );
-            }
-            else
-            {
-                app.UseHsts();
             }
 
             app.UseHttpsRedirection();
+
             app.UseRouting();
-            app.UseCors();
+
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
