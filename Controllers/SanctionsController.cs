@@ -147,9 +147,9 @@ namespace SanctionsApi.Controllers
             }
             return false;
         }
-        
+
         private void ExtractNamesFromQueryString() {
-            foreach (var fullName in HttpContext.Request.Query["name"].ToList()) 
+            foreach (var fullName in Request.Query["name"].ToList()) 
                 _fullNames.Add(SplitFullNameIntoList(fullName));
         }
 
