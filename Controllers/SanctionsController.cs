@@ -110,26 +110,26 @@ namespace SanctionsApi.Controllers
         }
 
 
-        private bool isNameInRecord(string[] record, FullName fullName, int maxAllowedScore) {
-            var score = 0;
-            var ignore = "";
-            foreach (PropertyInfo prop in record.GetType().GetProperties())
-            {
-                var propNames = prop.GetValue(record, null).ToString().ToLower().Split(' ');
-                foreach(var propName in propNames) {
-                    foreach (var name in fullName.Name) {
-                        if (string.Equals(propName, name) && !ignore.Contains(propName)) {
-                            score ++;               //mark match
-                            ignore += name;     //pop name from array
-                        }
-                    }
-                }
-            }
-            if (score >= maxAllowedScore) {
-                return true;
-            }
-            return false;
-        }
+        // private bool isNameInRecord(string[] record, FullName fullName, int maxAllowedScore) {
+        //     var score = 0;
+        //     var ignore = "";
+        //     foreach (PropertyInfo prop in record.GetType().GetProperties())
+        //     {
+        //         var propNames = prop.GetValue(record, null).ToString().ToLower().Split(' ');
+        //         foreach(var propName in propNames) {
+        //             foreach (var name in fullName.Name) {
+        //                 if (string.Equals(propName, name) && !ignore.Contains(propName)) {
+        //                     score ++;               //mark match
+        //                     ignore += name;     //pop name from array
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     if (score >= maxAllowedScore) {
+        //         return true;
+        //     }
+        //     return false;
+        // }
         private bool IsFullNameInRecord(string[] record, FullName fullName, int maxAllowedScore) {
             var score = 0;
             var ignore = "";
