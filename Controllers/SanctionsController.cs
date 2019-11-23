@@ -40,34 +40,16 @@ namespace SanctionsApi.Controllers
                 if (kvp.Key == "SanctionLists:" + HttpContext.Request.Query["sanctionsList"] + ":HeaderIndex")
                     _reportParams.HeaderIndex = Int32.Parse(kvp.Value);
                 if (kvp.Key == "SanctionLists:" + HttpContext.Request.Query["sanctionsList"] + ":Encoding")
-                {
-                    //TODO: Why is this not used?
                     _reportParams.Encoding = kvp.Value;
-                }
             }
 
-            using var fileReader = new StreamReader(_reportParams.File, Encoding.GetEncoding("iso-8859-1"));
-            var parser = new CsvParser(fileReader);
-            parser.Configuration.BadDataFound = null;
-            parser.Configuration.Delimiter = _reportParams.Delimiter;
+            using var fileReader = new StreamReader(_reportParams.File, Encoding.GetEncoding(_reportParams.Encoding));
+            var parser = SetupCsvParser(fileReader);
             var row = parser.Read();
 
             for (var i = 1; row != null; i++)
             {
-                if (i == 1 && row[0] == "Last Updated") // for uk sanctions check
-                    _container.report.resultSummary.version = row[0] + ' ' + row[1];
-
-                if (i == _reportParams.HeaderIndex)
-                    RecordHeaderFields(row);
-
-                foreach (var fullName in _fullNames)
-                {
-                    if (IsFullNameInRow(fullName, row))
-                    {
-                        AddRowToReport(row);
-                        break;
-                    }
-                }
+                ProcessRow(row, i);
                 row = parser.Read();
             }
 
@@ -96,6 +78,38 @@ namespace SanctionsApi.Controllers
         //     }
         //     return false;
         // }
+
+        private void ExtractNamesFromQueryString()
+        {
+            foreach (var fullName in Request.Query["name"].ToList())
+                _fullNames.Add(SplitFullNameIntoList(fullName));
+        }
+
+        private CsvParser SetupCsvParser(StreamReader fileReader)
+        {
+            var parser = new CsvParser(fileReader);
+            parser.Configuration.BadDataFound = null;
+            parser.Configuration.Delimiter = _reportParams.Delimiter;
+            return parser;
+        }
+
+        private void ProcessRow(string[] row, int rowIndex)
+        {
+            if (rowIndex == 1 && row[0] == "Last Updated") // for uk sanctions check
+                _container.report.resultSummary.version = row[0] + ' ' + row[1];
+
+            if (rowIndex == _reportParams.HeaderIndex)
+                RecordHeaderFields(row);
+
+            foreach (var fullName in _fullNames)
+            {
+                if (IsFullNameInRow(fullName, row))
+                {
+                    AddRowToReport(row);
+                    break;
+                }
+            }
+        }
 
         private void RecordHeaderFields(string[] row)
         {
@@ -130,12 +144,6 @@ namespace SanctionsApi.Controllers
                     foundRecord.Add(_reportParams.HeaderFields[i] + tempField, row[i]);
             }
             _container.report.record.Add(foundRecord);
-        }
-
-        private void ExtractNamesFromQueryString()
-        {
-            foreach (var fullName in Request.Query["name"].ToList())
-                _fullNames.Add(SplitFullNameIntoList(fullName));
         }
 
         private FullName SplitFullNameIntoList(string fullName)
