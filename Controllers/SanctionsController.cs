@@ -80,9 +80,7 @@ namespace SanctionsApi.Controllers
                     }
                     
                     foreach (var fullName in _fullNames) {
-                        var maxAllowedScore = fullName.Name.Count;
-                        if (maxAllowedScore > 2) maxAllowedScore = 2;
-                        if (IsFullNameInRecord(row, fullName, maxAllowedScore)) {
+                        if (IsFullNameInRow(fullName, row)) {
                             counter++;  
                             Dictionary<string, string> foundRecord = new Dictionary<string, string>();
                             
@@ -130,10 +128,11 @@ namespace SanctionsApi.Controllers
         //     }
         //     return false;
         // }
-        private bool IsFullNameInRecord(string[] record, FullName fullName, int maxAllowedScore) {
+
+        private bool IsFullNameInRow(FullName fullName, string[] row) {
             var score = 0;
             var ignore = "";
-            foreach (var field in record)
+            foreach (var field in row)
             {
                 var fieldWords = field.ToString().ToLower().Split(' ');
                 foreach(var fieldWord in fieldWords) {
@@ -145,7 +144,7 @@ namespace SanctionsApi.Controllers
                     }
                 }
             }
-            return (score >= maxAllowedScore);
+            return (score >= fullName.MaxAllowedScore);
         }
 
         private void ExtractNamesFromQueryString() {
