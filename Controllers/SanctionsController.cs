@@ -14,14 +14,14 @@ namespace SanctionsApi.Controllers
     [Route("[controller]")]
     public class SanctionsController : ControllerBase
     {
-        private readonly IConfiguration Configuration;
+        private readonly IConfiguration _configuration;
         private List<FullName> _fullNames = new List<FullName>();
         private Container _container = new Container();
-        private ReportParameters _reportParams = new ReportParameters();
+        private ReportParameter _reportParams = new ReportParameter();
 
         public SanctionsController(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -29,21 +29,12 @@ namespace SanctionsApi.Controllers
         {
             ExtractNamesFromQueryString();
 
-            //TODO: this should be done at build time!!
-            var config = Configuration.AsEnumerable();
-            foreach (KeyValuePair<string, string> kvp in config)
-            {
-                if (kvp.Key == "SanctionLists:" + HttpContext.Request.Query["sanctionsList"] + ":FileName")
-                    _reportParams.File = System.IO.Directory.GetCurrentDirectory() + @"\" + kvp.Value;
-                if (kvp.Key == "SanctionLists:" + HttpContext.Request.Query["sanctionsList"] + ":Delimiter")
-                    _reportParams.Delimiter = kvp.Value;
-                if (kvp.Key == "SanctionLists:" + HttpContext.Request.Query["sanctionsList"] + ":HeaderIndex")
-                    _reportParams.HeaderIndex = Int32.Parse(kvp.Value);
-                if (kvp.Key == "SanctionLists:" + HttpContext.Request.Query["sanctionsList"] + ":Encoding")
-                    _reportParams.Encoding = kvp.Value;
-            }
+            _reportParams.FileName = _configuration.GetSection("SanctionLists").GetSection(Request.Query["sanctionsList"]).GetSection("FileName").Value;
+            _reportParams.Delimiter = _configuration.GetSection("SanctionLists").GetSection(Request.Query["sanctionsList"]).GetSection("Delimiter").Value;
+            _reportParams.HeaderIndex = int.Parse(_configuration.GetSection("SanctionLists").GetSection(Request.Query["sanctionsList"]).GetSection("HeaderIndex").Value);
+            _reportParams.Encoding = _configuration.GetSection("SanctionLists").GetSection(Request.Query["sanctionsList"]).GetSection("Encoding").Value;
 
-            using var fileReader = new StreamReader(_reportParams.File, Encoding.GetEncoding(_reportParams.Encoding));
+            using var fileReader = new StreamReader(_reportParams.FileName, Encoding.GetEncoding(_reportParams.Encoding));
             var parser = SetupCsvParser(fileReader);
             var row = parser.Read();
 
@@ -137,7 +128,7 @@ namespace SanctionsApi.Controllers
         {
             _container.report.resultSummary.title = "Sanctions Check Report";
             _container.report.resultSummary.searchtext = String.Join(",", _fullNames);
-            _container.report.resultSummary.downloaded = System.IO.File.GetLastWriteTime(_reportParams.File).ToString();
+            _container.report.resultSummary.downloaded = System.IO.File.GetLastWriteTime(_reportParams.FileName).ToString();
         }
     }
 }
