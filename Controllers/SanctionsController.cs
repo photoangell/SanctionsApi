@@ -7,6 +7,7 @@ using CsvHelper;
 using System.IO;
 using System.Text;
 using Microsoft.Extensions.Configuration;
+using SanctionsApi.Exceptions;
 
 namespace SanctionsApi.Controllers
 {
@@ -55,7 +56,8 @@ namespace SanctionsApi.Controllers
                 _reportParams.Encoding = configForRegion.GetSection("Encoding").Value;
             }
             catch (Exception ex) {
-                throw new InvalidOperationException("there was a problem reading the configuration", ex);
+                //throw new InvalidOperationException("there was a problem reading the configuration", ex);
+                throw new ConfigIncorrectException("there was a problem reading the configuration", ex);
             }
         }
 
