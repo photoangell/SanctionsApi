@@ -14,10 +14,19 @@ namespace SanctionsApi
         }
 
         public IConfiguration Configuration { get; }
+        readonly string CorsOriginsSetup = "SanctionsApiOrigins";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(CorsOriginsSetup,
+                builder =>
+                {
+                    builder.AllowAnyOrigin();
+                });
+            });
             services.AddControllers();
         }
 
@@ -29,12 +38,10 @@ namespace SanctionsApi
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors(CorsOriginsSetup);
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
