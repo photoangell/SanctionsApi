@@ -28,11 +28,7 @@ namespace SanctionsApi.Controllers
         public Container Get()
         {
             ExtractNamesFromQueryString();
-
-            _reportParams.FileName = _configuration.GetSection("SanctionLists").GetSection(Request.Query["sanctionsList"]).GetSection("FileName").Value;
-            _reportParams.Delimiter = _configuration.GetSection("SanctionLists").GetSection(Request.Query["sanctionsList"]).GetSection("Delimiter").Value;
-            _reportParams.HeaderIndex = int.Parse(_configuration.GetSection("SanctionLists").GetSection(Request.Query["sanctionsList"]).GetSection("HeaderIndex").Value);
-            _reportParams.Encoding = _configuration.GetSection("SanctionLists").GetSection(Request.Query["sanctionsList"]).GetSection("Encoding").Value;
+            ReadConfiguration(Request.Query["sanctionsList"]);
 
             using var fileReader = new StreamReader(_reportParams.FileName, Encoding.GetEncoding(_reportParams.Encoding));
             var parser = SetupCsvParser(fileReader);
@@ -46,6 +42,21 @@ namespace SanctionsApi.Controllers
 
             WriteReportSummary();
             return _container;
+        }
+
+        private void ReadConfiguration(string region)
+        {
+            try
+            {
+                var configForRegion = _configuration.GetSection("SanctionLists").GetSection(region);
+                _reportParams.FileName = configForRegion.GetSection("FileName").Value;
+                _reportParams.Delimiter = configForRegion.GetSection("Delimiter").Value;
+                _reportParams.HeaderIndex = int.Parse(configForRegion.GetSection("HeaderIndex").Value);
+                _reportParams.Encoding = configForRegion.GetSection("Encoding").Value;
+            }
+            catch (Exception ex) {
+                throw new InvalidOperationException("there was a problem reading the configuration", ex);
+            }
         }
 
         private void ExtractNamesFromQueryString()
