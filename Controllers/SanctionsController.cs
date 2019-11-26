@@ -29,7 +29,7 @@ namespace SanctionsApi.Controllers
         public Container Get()
         {
             ExtractNamesFromQueryString();
-            ReadConfiguration(Request.Query["sanctionsList"]);
+            _reportParams = ReadConfiguration(Request.Query["sanctionsList"]);
 
             using var fileReader = new StreamReader(_reportParams.FileName, Encoding.GetEncoding(_reportParams.Encoding));
             var parser = SetupCsvParser(fileReader);
@@ -41,25 +41,28 @@ namespace SanctionsApi.Controllers
                 row = parser.Read();
             }
 
-            WriteReportSummary();
+            _container.report.resultSummary = MakeReportSummary();
             return _container;
         }
 
-        private void ReadConfiguration(string region)
+        private ReportParameter ReadConfiguration(string region)
         {
+            var rp = new ReportParameter();
             try
             {
                 var configForRegion = _configuration.GetSection("SanctionLists").GetSection(region);
-                _reportParams.FileName = configForRegion.GetSection("FileName").Value;
-                _reportParams.Delimiter = configForRegion.GetSection("Delimiter").Value;
-                _reportParams.HeaderIndex = int.Parse(configForRegion.GetSection("HeaderIndex").Value);
-                _reportParams.Encoding = configForRegion.GetSection("Encoding").Value;
+                rp.FileName = configForRegion.GetSection("FileName").Value;
+                rp.Delimiter = configForRegion.GetSection("Delimiter").Value;
+                rp.HeaderIndex = int.Parse(configForRegion.GetSection("HeaderIndex").Value);
+                rp.Encoding = configForRegion.GetSection("Encoding").Value;
             }
             catch (Exception ex) {
                 //throw new InvalidOperationException("there was a problem reading the configuration", ex);
                 throw new ConfigIncorrectException("there was a problem reading the configuration", ex);
             }
+            return rp;
         }
+
 
         private void ExtractNamesFromQueryString()
         {
@@ -137,11 +140,13 @@ namespace SanctionsApi.Controllers
             return nameList;
         }
 
-        private void WriteReportSummary()
+        private ResultSummary MakeReportSummary()
         {
-            _container.report.resultSummary.title = "Sanctions Check Report";
-            _container.report.resultSummary.searchtext = String.Join(",", _fullNames);
-            _container.report.resultSummary.downloaded = System.IO.File.GetLastWriteTime(_reportParams.FileName).ToString();
+            return new ResultSummary() {
+                title = "Sanctions Check Report",
+                searchtext = String.Join(",", _fullNames),
+                downloaded = System.IO.File.GetLastWriteTime(_reportParams.FileName).ToString()
+            };
         }
     }
 }
