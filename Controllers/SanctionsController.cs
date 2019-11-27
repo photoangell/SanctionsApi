@@ -32,7 +32,7 @@ namespace SanctionsApi.Controllers
             _reportParams = ReadConfiguration(Request.Query["sanctionsList"]);
 
             using var fileReader = new StreamReader(_reportParams.FileName, Encoding.GetEncoding(_reportParams.Encoding));
-            var parser = SetupCsvParser(fileReader);
+            using var parser = SetupCsvParser(fileReader);
             var row = parser.Read();
 
             for (var i = 1; row != null; i++)
