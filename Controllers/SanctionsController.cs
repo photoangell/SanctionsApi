@@ -7,7 +7,6 @@ using CsvHelper;
 using System.IO;
 using System.Text;
 using Microsoft.Extensions.Configuration;
-using SanctionsApi.Exceptions;
 
 namespace SanctionsApi.Controllers
 {
@@ -56,8 +55,8 @@ namespace SanctionsApi.Controllers
                 rp.HeaderIndex = int.Parse(configForRegion.GetSection("HeaderIndex").Value);
                 rp.Encoding = configForRegion.GetSection("Encoding").Value;
             }
-            catch (Exception ex) {
-                //throw new InvalidOperationException("there was a problem reading the configuration", ex);
+            catch (Exception ex)
+            {
                 throw new ConfigIncorrectException("there was a problem reading the configuration", ex);
             }
             return rp;
@@ -142,11 +141,20 @@ namespace SanctionsApi.Controllers
 
         private ResultSummary MakeReportSummary()
         {
-            return new ResultSummary() {
+            return new ResultSummary()
+            {
                 title = "Sanctions Check Report",
                 searchtext = String.Join(",", _fullNames),
                 downloaded = System.IO.File.GetLastWriteTime(_reportParams.FileName).ToString()
             };
+        }
+
+        public class ConfigIncorrectException : Exception
+        {
+            public ConfigIncorrectException() : base() { }
+            public ConfigIncorrectException(string message) : base(message) { }
+            public ConfigIncorrectException(string message, Exception innerException)
+                : base(message, innerException) { }
         }
     }
 }
