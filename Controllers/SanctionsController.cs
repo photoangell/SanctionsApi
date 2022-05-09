@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using SanctionsApi.Models;
 using CsvHelper;
 using System.IO;
 using System.Text;
+using CsvHelper.Configuration;
 using Microsoft.Extensions.Configuration;
 
 namespace SanctionsApi.Controllers
@@ -32,12 +34,13 @@ namespace SanctionsApi.Controllers
 
             using var fileReader = new StreamReader(_reportParams.FileName, Encoding.GetEncoding(_reportParams.Encoding));
             using var parser = SetupCsvParser(fileReader);
-            var row = parser.Read();
 
-            for (var i = 1; row != null; i++)
+            var i = 0;
+            while (parser.Read())
             {
+                i++;
+                var row = parser.Record;
                 ProcessRow(row, i);
-                row = parser.Read();
             }
 
             _container.report.resultSummary = MakeReportSummary(_container.report.resultSummary.numberOfResults);
@@ -69,12 +72,15 @@ namespace SanctionsApi.Controllers
                 _fullNames.Add(SplitFullNameIntoList(fullName));
         }
 
-        private CsvParser SetupCsvParser(StreamReader fileReader)
+        private CsvParser SetupCsvParser(TextReader fileReader)
         {
-            var parser = new CsvParser(fileReader);
-            parser.Configuration.BadDataFound = null;
-            parser.Configuration.Delimiter = _reportParams.Delimiter;
-            return parser;
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                Delimiter = _reportParams.Delimiter,
+                BadDataFound = null
+            };
+
+            return new CsvParser(fileReader, config);
         }
 
         private void ProcessRow(string[] row, int rowIndex)
