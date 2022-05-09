@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
 
-namespace SanctionsApi.Models
-{
-    public class FullName {
-        public List<string> Name {get; set;} = new List<string>();
+namespace SanctionsApi.Models;
 
-        public override string ToString() {
-            return String.Join(" ", Name);
-        }
-        public int MaxAllowedCount => Name.Count > 2 ? 2 : Name.Count;
+public class FullName {
+    public List<string> Name {get; } = new();
+
+    public override string ToString() {
+        return String.Join(" ", Name);
     }
+    public int MaxAllowedCount => Name.Count > 2 ? 2 : Name.Count;
 }
