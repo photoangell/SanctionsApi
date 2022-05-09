@@ -40,7 +40,7 @@ namespace SanctionsApi.Controllers
                 row = parser.Read();
             }
 
-            _container.report.resultSummary = MakeReportSummary();
+            _container.report.resultSummary = MakeReportSummary(_container.report.resultSummary.numberOfResults);
             return _container;
         }
 
@@ -139,13 +139,14 @@ namespace SanctionsApi.Controllers
             return nameList;
         }
 
-        private ResultSummary MakeReportSummary()
+        private ResultSummary MakeReportSummary(int numberOfResults) 
         {
             return new ResultSummary()
             {
                 title = "Sanctions Check Report",
                 searchtext = String.Join(",", _fullNames),
-                downloaded = System.IO.File.GetLastWriteTime(_reportParams.FileName).ToString()
+                downloaded = System.IO.File.GetLastWriteTime(_reportParams.FileName).ToString(),
+                numberOfResults = numberOfResults
             };
         }
 
