@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SanctionsApi.Models;
 
-public class ReportParameter
+public class SanctionsListConfig
 {
     public string FileName { get; set; }
     public string Delimiter { get; set; }

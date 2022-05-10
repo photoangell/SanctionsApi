@@ -21,10 +21,10 @@ namespace SanctionsApi.Controllers;
 public class SanctionsController : ControllerBase
 {
     private readonly IConfiguration _configuration;
-    private readonly Container _container = new();
+    private readonly ReportContainer _reportContainer = new();
     private readonly IWebHostEnvironment _env;
     private IEnumerable<FullName> _fullNames;
-    private ReportParameter _reportParams = new();
+    private SanctionsListConfig _reportParams = new();
 
     public SanctionsController(IConfiguration configuration, IWebHostEnvironment env)
     {
@@ -33,7 +33,7 @@ public class SanctionsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<Container> GetAsync([FromQuery] string[] name, string sanctionsList)
+    public async Task<ReportContainer> GetAsync([FromQuery] string[] name, string sanctionsList)
     {
         _fullNames = ExtractNamesFromQueryString(name);
         _reportParams = ReadConfiguration(sanctionsList);
@@ -47,13 +47,13 @@ public class SanctionsController : ControllerBase
             ProcessRow(parser.Record, ++i);
         }
 
-        _container.report.resultSummary = MakeReportSummary(_container.report.resultSummary);
-        return _container;
+        _reportContainer.report.resultSummary = MakeReportSummary(_reportContainer.report.resultSummary);
+        return _reportContainer;
     }
 
-    private ReportParameter ReadConfiguration(string region)
+    private SanctionsListConfig ReadConfiguration(string region)
     {
-        var rp = new ReportParameter();
+        var rp = new SanctionsListConfig();
         try
         {
             var configForRegion = _configuration.GetSection("SanctionLists").GetSection(region);
@@ -94,7 +94,7 @@ public class SanctionsController : ControllerBase
     private void ProcessRow(IReadOnlyList<string> row, int rowIndex)
     {
         if (rowIndex == 1 && row[0] == "Last Updated") // for uk sanctions check
-            _container.report.resultSummary.version = row[0] + ' ' + row[1];
+            _reportContainer.report.resultSummary.version = row[0] + ' ' + row[1];
 
         if (rowIndex == _reportParams.HeaderIndex)
             RecordHeaderFields(row);
@@ -138,8 +138,8 @@ public class SanctionsController : ControllerBase
                 foundRecord.Add(_reportParams.HeaderFields[i] + tempField, row[i]);
         }
 
-        _container.report.record.Add(foundRecord);
-        _container.report.resultSummary.numberOfResults++;
+        _reportContainer.report.record.Add(foundRecord);
+        _reportContainer.report.resultSummary.numberOfResults++;
     }
 
     private static FullName MapNameToFullNameObject(string fullName)
