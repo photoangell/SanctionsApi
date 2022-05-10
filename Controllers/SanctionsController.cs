@@ -9,8 +9,8 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using SanctionsApi.Exceptions;
 using SanctionsApi.Models;
 
@@ -20,25 +20,27 @@ namespace SanctionsApi.Controllers;
 [Route("[controller]")]
 public class SanctionsController : ControllerBase
 {
-    private readonly IConfiguration _configuration;
-    private readonly ReportContainer _reportContainer = new();
     private readonly IWebHostEnvironment _env;
+    private readonly ReportContainer _reportContainer = new();
+    private readonly IEnumerable<SanctionsListConfig> _sanctionsListConfigs;
     private IEnumerable<FullName> _fullNames;
-    private SanctionsListConfig _reportParams = new();
+    private SanctionsListConfig _reportParams;
 
-    public SanctionsController(IConfiguration configuration, IWebHostEnvironment env)
+    public SanctionsController(IWebHostEnvironment env, IOptionsMonitor<List<SanctionsListConfig>> sanctionsListConfigs)
     {
-        _configuration = configuration;
         _env = env;
+        _sanctionsListConfigs = sanctionsListConfigs.CurrentValue;
     }
 
     [HttpGet]
     public async Task<ReportContainer> GetAsync([FromQuery] string[] name, string sanctionsList)
     {
         _fullNames = ExtractNamesFromQueryString(name);
-        _reportParams = ReadConfiguration(sanctionsList);
+        _reportParams = _sanctionsListConfigs.FirstOrDefault(x => x.Area == sanctionsList) ??
+                        throw new ConfigIncorrectException("there was a problem reading the configuration");
 
-        using var fileReader = new StreamReader(_reportParams.FileName, Encoding.GetEncoding(_reportParams.Encoding));
+        var file = _env.IsDevelopment() ? _reportParams.SampleFileName : _reportParams.FileName;
+        using var fileReader = new StreamReader(file, Encoding.GetEncoding(_reportParams.Encoding));
         using var parser = SetupCsvParser(fileReader);
 
         var i = 0;
@@ -49,30 +51,6 @@ public class SanctionsController : ControllerBase
 
         _reportContainer.report.resultSummary = MakeReportSummary(_reportContainer.report.resultSummary);
         return _reportContainer;
-    }
-
-    private SanctionsListConfig ReadConfiguration(string region)
-    {
-        var rp = new SanctionsListConfig();
-        try
-        {
-            var configForRegion = _configuration.GetSection("SanctionLists").GetSection(region);
-            rp.FileName = IfDevelopmentUseSampleFile(configForRegion.GetSection("FileName").Value);
-            rp.Delimiter = configForRegion.GetSection("Delimiter").Value;
-            rp.HeaderIndex = Int32.Parse(configForRegion.GetSection("HeaderIndex").Value);
-            rp.Encoding = configForRegion.GetSection("Encoding").Value;
-        }
-        catch (Exception ex)
-        {
-            throw new ConfigIncorrectException("there was a problem reading the configuration", ex);
-        }
-
-        return rp;
-    }
-
-    private string IfDevelopmentUseSampleFile(string value)
-    {
-        return _env.IsDevelopment() ? Path.Combine("SampleFiles", value.Substring(value.LastIndexOf("\\") + 1)) : value;
     }
 
     private static IEnumerable<FullName> ExtractNamesFromQueryString(IEnumerable<string> names)
