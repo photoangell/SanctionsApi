@@ -8,7 +8,9 @@ using CsvHelper;
 using System.IO;
 using System.Text;
 using CsvHelper.Configuration;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace SanctionsApi.Controllers;
 
@@ -17,15 +19,17 @@ namespace SanctionsApi.Controllers;
 public class SanctionsController : ControllerBase
 {
     private readonly IConfiguration _configuration;
+    private readonly IWebHostEnvironment _env;
     private readonly List<FullName> _fullNames = new();
     private readonly Container _container = new();
     private ReportParameter _reportParams = new();
 
-    public SanctionsController(IConfiguration configuration)
+    public SanctionsController(IConfiguration configuration, IWebHostEnvironment env)
     {
         _configuration = configuration;
+        _env = env;
     }
-
+    
     [HttpGet]
     public Container Get()
     {
@@ -53,7 +57,7 @@ public class SanctionsController : ControllerBase
         try
         {
             var configForRegion = _configuration.GetSection("SanctionLists").GetSection(region);
-            rp.FileName = configForRegion.GetSection("FileName").Value;
+            rp.FileName = GetPathToFile(configForRegion.GetSection("FileName").Value);
             rp.Delimiter = configForRegion.GetSection("Delimiter").Value;
             rp.HeaderIndex = Int32.Parse(configForRegion.GetSection("HeaderIndex").Value);
             rp.Encoding = configForRegion.GetSection("Encoding").Value;
@@ -64,6 +68,11 @@ public class SanctionsController : ControllerBase
         }
 
         return rp;
+    }
+
+    private string GetPathToFile(string value)
+    {
+        return _env.IsDevelopment() ? value.Substring(value.LastIndexOf("\\") + 1) : value;
     }
 
     private void ExtractNamesFromQueryString()
