@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SanctionsApi.Controllers;
+namespace SanctionsApi.Exceptions;
 
 public class ConfigIncorrectException : Exception
 {
