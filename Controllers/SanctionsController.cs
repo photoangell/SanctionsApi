@@ -32,10 +32,10 @@ public class SanctionsController : ControllerBase
     }
 
     [HttpGet]
-    public Container Get()
+    public Container Get([FromQuery] string[] name, string sanctionsList)
     {
-        _fullNames = ExtractNamesFromQueryString();
-        _reportParams = ReadConfiguration(Request.Query["sanctionsList"]);
+        _fullNames = ExtractNamesFromQueryString(name);
+        _reportParams = ReadConfiguration(sanctionsList);
 
         using var fileReader = new StreamReader(_reportParams.FileName, Encoding.GetEncoding(_reportParams.Encoding));
         using var parser = SetupCsvParser(fileReader);
@@ -74,9 +74,9 @@ public class SanctionsController : ControllerBase
         return _env.IsDevelopment() ? Path.Combine("SampleFiles", value.Substring(value.LastIndexOf("\\") + 1)) : value;
     }
 
-    private IEnumerable<FullName> ExtractNamesFromQueryString()
+    private static IEnumerable<FullName> ExtractNamesFromQueryString(IEnumerable<string> names)
     {
-        return Request.Query["name"].Select(SplitFullNameIntoList);
+        return names.Select(MapNameToFullNameObject);
     }
 
     private CsvParser SetupCsvParser(TextReader fileReader)
@@ -141,7 +141,7 @@ public class SanctionsController : ControllerBase
         _container.report.resultSummary.numberOfResults++;
     }
 
-    private static FullName SplitFullNameIntoList(string fullName)
+    private static FullName MapNameToFullNameObject(string fullName)
     {
         var nameList = new FullName();
         foreach (var name in fullName.ToLower().Split(' '))
