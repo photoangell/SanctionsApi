@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Hosting;
@@ -32,7 +33,7 @@ public class SanctionsController : ControllerBase
     }
 
     [HttpGet]
-    public Container Get([FromQuery] string[] name, string sanctionsList)
+    public async Task<Container> GetAsync([FromQuery] string[] name, string sanctionsList)
     {
         _fullNames = ExtractNamesFromQueryString(name);
         _reportParams = ReadConfiguration(sanctionsList);
@@ -41,7 +42,7 @@ public class SanctionsController : ControllerBase
         using var parser = SetupCsvParser(fileReader);
 
         var i = 0;
-        while (parser.Read())
+        while (await parser.ReadAsync())
         {
             ProcessRow(parser.Record, ++i);
         }
