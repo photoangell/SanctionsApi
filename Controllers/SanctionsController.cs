@@ -33,7 +33,7 @@ public class SanctionsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ReportContainer> GetAsync([FromQuery] string[] name, string sanctionsList)
+    public async Task<IActionResult> GetAsync([FromQuery] string[] name, string sanctionsList)
     {
         _fullNames = ExtractNamesFromQueryString(name);
         _reportParams = _sanctionsListConfigs.FirstOrDefault(x => x.Area == sanctionsList) ??
@@ -50,7 +50,7 @@ public class SanctionsController : ControllerBase
         }
 
         _reportContainer.report.resultSummary = MakeReportSummary(_reportContainer.report.resultSummary);
-        return _reportContainer;
+        return Ok(_reportContainer);
     }
 
     private static IEnumerable<FullName> ExtractNamesFromQueryString(IEnumerable<string> names)
