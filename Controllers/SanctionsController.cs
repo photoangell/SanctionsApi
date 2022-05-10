@@ -22,7 +22,7 @@ public class SanctionsController : ControllerBase
     private readonly IConfiguration _configuration;
     private readonly Container _container = new();
     private readonly IWebHostEnvironment _env;
-    private readonly List<FullName> _fullNames = new();
+    private IEnumerable<FullName> _fullNames;
     private ReportParameter _reportParams = new();
 
     public SanctionsController(IConfiguration configuration, IWebHostEnvironment env)
@@ -34,7 +34,7 @@ public class SanctionsController : ControllerBase
     [HttpGet]
     public Container Get()
     {
-        ExtractNamesFromQueryString();
+        _fullNames = ExtractNamesFromQueryString();
         _reportParams = ReadConfiguration(Request.Query["sanctionsList"]);
 
         using var fileReader = new StreamReader(_reportParams.FileName, Encoding.GetEncoding(_reportParams.Encoding));
@@ -76,10 +76,9 @@ public class SanctionsController : ControllerBase
         return _env.IsDevelopment() ? Path.Combine("SampleFiles", value.Substring(value.LastIndexOf("\\") + 1)) : value;
     }
 
-    private void ExtractNamesFromQueryString()
+    private IEnumerable<FullName> ExtractNamesFromQueryString()
     {
-        foreach (var fullName in Request.Query["name"].ToList())
-            _fullNames.Add(SplitFullNameIntoList(fullName));
+        return Request.Query["name"].Select(SplitFullNameIntoList);
     }
 
     private CsvParser SetupCsvParser(TextReader fileReader)
