@@ -17,21 +17,18 @@ builder.Services.AddCors(options =>
         builder => { builder.AllowAnyOrigin(); });
 });
 builder.Services.AddControllers();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "SanctionsApi", Version = "v1" });
-});
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "SanctionsApi"); });
+    app.UseSwaggerUI();
 }
 
-app.UseCors(CorsOriginsSetup);
 app.UseHttpsRedirection();
+app.UseCors(CorsOriginsSetup);
 app.UseRouting();
 app.UseAuthorization();
 app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
