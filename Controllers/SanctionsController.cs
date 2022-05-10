@@ -58,7 +58,7 @@ public class SanctionsController : ControllerBase
         try
         {
             var configForRegion = _configuration.GetSection("SanctionLists").GetSection(region);
-            rp.FileName = GetPathToFile(configForRegion.GetSection("FileName").Value);
+            rp.FileName = IfDevelopmentUseSampleFile(configForRegion.GetSection("FileName").Value);
             rp.Delimiter = configForRegion.GetSection("Delimiter").Value;
             rp.HeaderIndex = Int32.Parse(configForRegion.GetSection("HeaderIndex").Value);
             rp.Encoding = configForRegion.GetSection("Encoding").Value;
@@ -71,7 +71,7 @@ public class SanctionsController : ControllerBase
         return rp;
     }
 
-    private string GetPathToFile(string value)
+    private string IfDevelopmentUseSampleFile(string value)
     {
         return _env.IsDevelopment() ? Path.Combine("SampleFiles", value.Substring(value.LastIndexOf("\\") + 1)) : value;
     }
