@@ -4,7 +4,7 @@ namespace SanctionsApi.Controllers;
 
 public class ConfigIncorrectException : Exception
 {
-    public ConfigIncorrectException() : base()
+    public ConfigIncorrectException()
     {
     }
 

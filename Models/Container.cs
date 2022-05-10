@@ -1,9 +1,11 @@
 namespace SanctionsApi.Models;
 
-public class Container{
-    public Report report {get; }
-
-    public Container() {
+public class Container
+{
+    public Container()
+    {
         report = new Report();
     }
+
+    public Report report { get; }
 }

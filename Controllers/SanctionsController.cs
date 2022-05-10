@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc;
-using SanctionsApi.Models;
-using CsvHelper;
 using System.IO;
+using System.Linq;
 using System.Text;
+using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using SanctionsApi.Models;
 
 namespace SanctionsApi.Controllers;
 
@@ -19,9 +19,9 @@ namespace SanctionsApi.Controllers;
 public class SanctionsController : ControllerBase
 {
     private readonly IConfiguration _configuration;
+    private readonly Container _container = new();
     private readonly IWebHostEnvironment _env;
     private readonly List<FullName> _fullNames = new();
-    private readonly Container _container = new();
     private ReportParameter _reportParams = new();
 
     public SanctionsController(IConfiguration configuration, IWebHostEnvironment env)
@@ -29,7 +29,7 @@ public class SanctionsController : ControllerBase
         _configuration = configuration;
         _env = env;
     }
-    
+
     [HttpGet]
     public Container Get()
     {
