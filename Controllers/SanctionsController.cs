@@ -72,7 +72,7 @@ public class SanctionsController : ControllerBase
 
     private string GetPathToFile(string value)
     {
-        return _env.IsDevelopment() ? value.Substring(value.LastIndexOf("\\") + 1) : value;
+        return _env.IsDevelopment() ? Path.Combine("SampleFiles", value.Substring(value.LastIndexOf("\\") + 1)) : value;
     }
 
     private void ExtractNamesFromQueryString()
