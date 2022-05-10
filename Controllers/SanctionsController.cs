@@ -43,9 +43,7 @@ public class SanctionsController : ControllerBase
         var i = 0;
         while (parser.Read())
         {
-            i++;
-            var row = parser.Record;
-            ProcessRow(row, i);
+            ProcessRow(parser.Record, ++i);
         }
 
         _container.report.resultSummary = MakeReportSummary(_container.report.resultSummary);
