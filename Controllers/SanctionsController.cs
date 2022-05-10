@@ -48,7 +48,7 @@ public class SanctionsController : ControllerBase
             ProcessRow(row, i);
         }
 
-        _container.report.resultSummary = MakeReportSummary(_container.report.resultSummary.numberOfResults);
+        _container.report.resultSummary = MakeReportSummary(_container.report.resultSummary);
         return _container;
     }
 
@@ -128,7 +128,6 @@ public class SanctionsController : ControllerBase
 
     private void AddRowToReport(IReadOnlyList<string> row)
     {
-        _container.report.resultSummary.numberOfResults++;
         var foundRecord = new Dictionary<string, string>();
 
         for (var i = 0; i < _reportParams.HeaderFields.Count; i++)
@@ -142,6 +141,7 @@ public class SanctionsController : ControllerBase
         }
 
         _container.report.record.Add(foundRecord);
+        _container.report.resultSummary.numberOfResults++;
     }
 
     private static FullName SplitFullNameIntoList(string fullName)
@@ -152,14 +152,11 @@ public class SanctionsController : ControllerBase
         return nameList;
     }
 
-    private ResultSummary MakeReportSummary(int numberOfResults)
+    private ResultSummary MakeReportSummary(ResultSummary resultSummary)
     {
-        return new ResultSummary
-        {
-            title = "Sanctions Check Report",
-            searchtext = String.Join(",", _fullNames),
-            downloaded = System.IO.File.GetLastWriteTime(_reportParams.FileName).ToString(),
-            numberOfResults = numberOfResults
-        };
+        resultSummary.title = "Sanctions Check Report";
+        resultSummary.searchtext = String.Join(",", _fullNames);
+        resultSummary.downloaded = System.IO.File.GetLastWriteTime(_reportParams.FileName).ToString();
+        return resultSummary;
     }
 }
