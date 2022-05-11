@@ -5,11 +5,11 @@ namespace SanctionsApi.Models;
 
 public class SanctionsListConfig
 {
-    public string Area { get; set; }
-    public string FileName { get; set; }
-    public string Delimiter { get; set; }
-    public int HeaderIndex { get; set; }
-    public string Encoding { get; set; }
+    public string Area { get; init; }
+    public string FileName { get; init; }
+    public string Delimiter { get; init; }
+    public int HeaderIndex { get; init; }
+    public string Encoding { get; init; }
     public List<string> HeaderFields { get; } = new();
 
     public string SampleFileName => Path.Combine("SampleFiles", FileName.Substring(FileName.LastIndexOf("\\") + 1));
