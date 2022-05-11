@@ -23,8 +23,8 @@ public class SanctionsController : ControllerBase
     private readonly IWebHostEnvironment _env;
     private readonly ReportContainer _reportContainer = new();
     private readonly IEnumerable<SanctionsListConfig> _sanctionsListConfigs;
-    private IEnumerable<FullName> _fullNames;
-    private SanctionsListConfig _reportParams;
+    private IEnumerable<FullName> _fullNames = default!;
+    private SanctionsListConfig _reportParams = default!;
 
     public SanctionsController(IWebHostEnvironment env, IOptionsMonitor<List<SanctionsListConfig>> sanctionsListConfigs)
     {

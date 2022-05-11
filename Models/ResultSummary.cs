@@ -2,9 +2,9 @@ namespace SanctionsApi.Models;
 
 public class ResultSummary
 {
-    public string title { get; set; }
-    public string version { get; set; }
-    public string downloaded { get; set; }
-    public string searchtext { get; set; }
+    public string title { get; set; } = default!;
+    public string version { get; set; } = default!;
+    public string downloaded { get; set; } = default!;
+    public string searchtext { get; set; } = default!;
     public int numberOfResults { get; set; }
 }
