@@ -16,6 +16,7 @@ builder.Services.AddCors(options =>
         builder => { builder.AllowAnyOrigin(); });
 });
 builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
