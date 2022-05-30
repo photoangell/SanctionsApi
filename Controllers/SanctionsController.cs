@@ -123,8 +123,9 @@ public class SanctionsController : ControllerBase
     private static FullName MapNameToFullNameObject(string fullName)
     {
         var nameList = new FullName();
-        foreach (var name in fullName.ToLower().Split(' '))
-            nameList.Name.Add(name);
+        var cleanedNames = fullName.Trim().ToLower().Split(' ').Select(n => n.Trim()).Where(n => n.Length > 0)
+            .ToArray();
+        nameList.Name.AddRange(cleanedNames);
         return nameList;
     }
 
