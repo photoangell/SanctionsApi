@@ -123,12 +123,43 @@ public class SanctionsController : ControllerBase
     private static FullName MapNameToFullNameObject(string fullName)
     {
         var nameList = new FullName();
-        var cleanedNames = fullName.Trim().ToLower().Split(' ').Select(n => n.Trim()).Where(n => n.Length > 0)
-            .ToArray();
-        nameList.Name.AddRange(cleanedNames);
+        var cleanedNames = fullName.Trim().ToLower().Split(' ').Select(n => n.Trim()).Where(n => n.Length > 0);
+        var cleanedAndDeNoisedNames = cleanedNames.Where(DeNoiseName);
+        nameList.Name.AddRange(cleanedAndDeNoisedNames);
         return nameList;
     }
 
+    private static bool DeNoiseName(string s)
+    {
+        var commonWords = new[]
+        {
+            "of",
+            "the",
+            "and",
+            "a",
+            "an",
+            "to",
+            "at",
+            "in",
+            "on",
+            "for",
+            "by",
+            "with",
+            "from",
+            "as",
+            "is",
+            "was",
+            "were",
+            "be",
+            "been",
+            "are",
+            "were",
+            "has",
+            "had"
+        };
+        return !commonWords.Contains(s); 
+    }
+   
     private ResultSummary MakeReportSummary(ResultSummary resultSummary)
     {
         resultSummary.title = "Sanctions Check Report";
