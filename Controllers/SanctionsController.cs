@@ -9,7 +9,6 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using SanctionsApi.Exceptions;
 using SanctionsApi.Models;
@@ -39,8 +38,7 @@ public class SanctionsController : ControllerBase
         _reportParams = _sanctionsListConfigs.FirstOrDefault(x => x.Area == sanctionsList) ??
                         throw new ConfigIncorrectException("there was a problem reading the configuration");
 
-        var file = _env.IsDevelopment() ? _reportParams.SampleFileName : _reportParams.FileName;
-        using var fileReader = new StreamReader(file, Encoding.GetEncoding(_reportParams.Encoding));
+        using var fileReader = new StreamReader(_reportParams.FileName, Encoding.GetEncoding(_reportParams.Encoding));
         using var parser = SetupCsvParser(fileReader);
 
         var i = 0;
