@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace SanctionsApi.Models;
 
@@ -6,10 +7,13 @@ public class Report
 {
     public Report()
     {
-        resultSummary = new ResultSummary();
-        record = new List<Dictionary<string, string>>();
+        ResultSummary = new ResultSummary();
+        SanctionsMatches = new List<Dictionary<string, string>>();
     }
 
-    public ResultSummary resultSummary { get; set; }
-    public List<Dictionary<string, string>> record { get; }
+    [JsonPropertyName("resultSummary")]
+    public ResultSummary ResultSummary { get; set; }
+
+    [JsonPropertyName("record")]
+    public List<Dictionary<string, string>> SanctionsMatches { get; }
 }

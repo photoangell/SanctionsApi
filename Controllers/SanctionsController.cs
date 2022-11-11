@@ -9,7 +9,7 @@ namespace SanctionsApi.Controllers;
 public class SanctionsController : ControllerBase
 {
     private readonly IBuildSanctionsReport _buildSanctionsReport;
-    
+
     public SanctionsController(IBuildSanctionsReport buildSanctionsReport)
     {
         _buildSanctionsReport = buildSanctionsReport;

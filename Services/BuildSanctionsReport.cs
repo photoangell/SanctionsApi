@@ -15,9 +15,9 @@ namespace SanctionsApi.Services;
 
 public class BuildSanctionsReport : IBuildSanctionsReport
 {
+    private readonly ReportContainer _reportContainer = new();
     private readonly IEnumerable<SanctionsListConfig> _sanctionsListConfigs;
     private IEnumerable<FullName> _fullNames = default!;
-    private readonly ReportContainer _reportContainer = new();
     private SanctionsListConfig _reportParams = default!;
 
     public BuildSanctionsReport(IOptionsMonitor<List<SanctionsListConfig>> sanctionsListConfigs)
@@ -28,7 +28,7 @@ public class BuildSanctionsReport : IBuildSanctionsReport
     public async Task<ReportContainer> Execute(string[] name, string sanctionsList)
     {
         _fullNames = ExtractNamesFromQueryString(name);
-        _reportParams = _sanctionsListConfigs.FirstOrDefault(x => x.Area == sanctionsList) ??
+        _reportParams = _sanctionsListConfigs.SingleOrDefault(x => x.Area == sanctionsList) ??
                         throw new ConfigIncorrectException("there was a problem reading the configuration");
 
         using var fileReader = new StreamReader(_reportParams.FileName, Encoding.GetEncoding(_reportParams.Encoding));
@@ -40,7 +40,7 @@ public class BuildSanctionsReport : IBuildSanctionsReport
             ProcessRow(parser.Record, ++i);
         }
 
-        _reportContainer.report.resultSummary = MakeReportSummary(_reportContainer.report.resultSummary);
+        _reportContainer.Report.ResultSummary = MakeReportSummary(_reportContainer.Report.ResultSummary);
 
         return _reportContainer;
     }
@@ -64,7 +64,7 @@ public class BuildSanctionsReport : IBuildSanctionsReport
     private void ProcessRow(IReadOnlyList<string> row, int rowIndex)
     {
         if (rowIndex == 1 && row[0] == "Last Updated") // for uk sanctions check
-            _reportContainer.report.resultSummary.version = row[0] + ' ' + row[1];
+            _reportContainer.Report.ResultSummary.SourceFileVersion = row[0] + ' ' + row[1];
 
         if (rowIndex == _reportParams.HeaderIndex)
             RecordHeaderFields(row);
@@ -85,7 +85,7 @@ public class BuildSanctionsReport : IBuildSanctionsReport
     {
         var countMatchedNames = row.SelectMany(r => r.Split(' '))
             .Distinct()
-            .Join(fullName.Name,
+            .Join(fullName.Names,
                 r => r.ToLower(),
                 n => n.ToLower(),
                 (r, _) => new { r })
@@ -108,8 +108,8 @@ public class BuildSanctionsReport : IBuildSanctionsReport
                 foundRecord.Add(_reportParams.HeaderFields[i] + tempField, row[i]);
         }
 
-        _reportContainer.report.record.Add(foundRecord);
-        _reportContainer.report.resultSummary.numberOfResults++;
+        _reportContainer.Report.SanctionsMatches.Add(foundRecord);
+        _reportContainer.Report.ResultSummary.NumberOfResults++;
     }
 
     private static FullName MapNameToFullNameObject(string fullName)
@@ -117,7 +117,7 @@ public class BuildSanctionsReport : IBuildSanctionsReport
         var nameList = new FullName();
         var cleanedNames = fullName.Trim().ToLower().Split(' ').Select(n => n.Trim()).Where(n => n.Length > 0);
         var cleanedAndDeNoisedNames = cleanedNames.Where(DeNoiseName);
-        nameList.Name.AddRange(cleanedAndDeNoisedNames);
+        nameList.Names.AddRange(cleanedAndDeNoisedNames);
         return nameList;
     }
 
@@ -154,9 +154,9 @@ public class BuildSanctionsReport : IBuildSanctionsReport
 
     private ResultSummary MakeReportSummary(ResultSummary resultSummary)
     {
-        resultSummary.title = "Sanctions Check Report";
-        resultSummary.searchtext = String.Join(",", _fullNames);
-        resultSummary.downloaded = File.GetLastWriteTime(_reportParams.FileName).ToString();
+        resultSummary.ReportTitle = "Sanctions Check Report";
+        resultSummary.SearchText = String.Join(",", _fullNames);
+        resultSummary.SourceFileDownloadedDate = File.GetLastWriteTime(_reportParams.FileName).ToString();
         return resultSummary;
     }
 }
