@@ -5,7 +5,7 @@ namespace SanctionsApi.Models;
 public class ResultSummary
 {
     [JsonPropertyName("title")]
-    public string ReportTitle { get; set; } = default!;
+    public string ReportTitle => "Sanctions Check Report";
 
     [JsonPropertyName("version")]
     public string SourceFileVersion { get; set; } = default!;

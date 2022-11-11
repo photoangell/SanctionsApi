@@ -25,9 +25,9 @@ public class BuildSanctionsReport : IBuildSanctionsReport
         _sanctionsListConfigs = sanctionsListConfigs.CurrentValue;
     }
 
-    public async Task<ReportContainer> Execute(string[] name, string sanctionsList)
+    public async Task<ReportContainer> Execute(IEnumerable<string> names, string sanctionsList)
     {
-        _fullNames = ExtractNamesFromQueryString(name);
+        _fullNames = ExtractNamesFromQueryString(names);
         _reportParams = _sanctionsListConfigs.SingleOrDefault(x => x.Area == sanctionsList) ??
                         throw new ConfigIncorrectException("there was a problem reading the configuration");
 
@@ -154,7 +154,6 @@ public class BuildSanctionsReport : IBuildSanctionsReport
 
     private ResultSummary MakeReportSummary(ResultSummary resultSummary)
     {
-        resultSummary.ReportTitle = "Sanctions Check Report";
         resultSummary.SearchText = String.Join(",", _fullNames);
         resultSummary.SourceFileDownloadedDate = File.GetLastWriteTime(_reportParams.FileName).ToString();
         return resultSummary;
