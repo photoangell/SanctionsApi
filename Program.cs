@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using SanctionsApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true, true);
 builder.Services.Configure<List<SanctionsListConfig>>(builder.Configuration.GetSection("SanctionLists"));
 
 const string CorsOriginsSetup = "SanctionsApiOrigins";
@@ -16,15 +16,27 @@ builder.Services.AddCors(options =>
         builder => { builder.AllowAnyOrigin(); });
 });
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen(c =>
+    {
+        c.SwaggerDoc("v1", new OpenApiInfo
+        {
+            Title = "Sanctions Api", Version = "v1"
+        });
+    });
+}
 
 var app = builder.Build();
+app.Logger.LogInformation("The app started");
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json",
+        $"{builder.Environment.ApplicationName} v1"));
 }
 
 app.UseHttpsRedirection();
@@ -32,3 +44,4 @@ app.UseCors(CorsOriginsSetup);
 app.MapControllers();
 
 app.Run();
+app.Logger.LogInformation("The app terminated");

@@ -157,9 +157,9 @@ public class SanctionsController : ControllerBase
             "has",
             "had"
         };
-        return !commonWords.Contains(s); 
+        return !commonWords.Contains(s);
     }
-   
+
     private ResultSummary MakeReportSummary(ResultSummary resultSummary)
     {
         resultSummary.title = "Sanctions Check Report";
