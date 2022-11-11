@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using SanctionsApi.Models;
+using SanctionsApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<List<SanctionsListConfig>>(builder.Configuration.GetSection("SanctionLists"));
@@ -28,6 +29,8 @@ if (builder.Environment.IsDevelopment())
         });
     });
 }
+
+builder.Services.AddScoped<IBuildSanctionsReport, BuildSanctionsReport>();
 
 var app = builder.Build();
 app.Logger.LogInformation("The app started");
