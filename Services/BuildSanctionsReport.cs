@@ -102,10 +102,13 @@ public class BuildSanctionsReport : IBuildSanctionsReport
         for (var i = 0; i < row.Count; i++)
         {
             var tempField = "";
-            if (foundRecord.ContainsKey(_reportParams.HeaderFields[i]))
+            var headerField = i >= _reportParams.HeaderFields.Count
+                ? "Field " + (i + 1)
+                : _reportParams.HeaderFields[i];
+            if (foundRecord.ContainsKey(headerField))
                 tempField = "_" + i;
             if (i < row.Count)
-                foundRecord.Add(_reportParams.HeaderFields[i] + tempField, row[i]);
+                foundRecord.Add(headerField + tempField, row[i]);
         }
 
         _reportContainer.Report.SanctionsMatches.Add(foundRecord);
