@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SanctionsApi.Exceptions;
 using SanctionsApi.Models;
@@ -15,19 +16,25 @@ namespace SanctionsApi.Services;
 
 public class BuildSanctionsReport : IBuildSanctionsReport
 {
+    private readonly ILogger<BuildSanctionsReport> _logger;
     private readonly ReportContainer _reportContainer = new();
     private readonly IEnumerable<SanctionsListConfig> _sanctionsListConfigs;
     private IEnumerable<FullName> _fullNames = default!;
     private SanctionsListConfig _reportParams = default!;
 
-    public BuildSanctionsReport(IOptionsMonitor<List<SanctionsListConfig>> sanctionsListConfigs)
+    public BuildSanctionsReport(ILogger<BuildSanctionsReport> logger,
+        IOptionsMonitor<List<SanctionsListConfig>> sanctionsListConfigs)
     {
+        _logger = logger;
         _sanctionsListConfigs = sanctionsListConfigs.CurrentValue;
     }
 
     public async Task<ReportContainer> Execute(IEnumerable<string> names, string sanctionsList)
     {
         _fullNames = ExtractNamesFromQueryString(names);
+        _logger.LogInformation("Extracted {FullNameCount} full names from query string", _fullNames.Count());
+        _logger.LogInformation("Full names: {@FullNames}", _fullNames);
+
         _reportParams = _sanctionsListConfigs.SingleOrDefault(x => x.Area == sanctionsList) ??
                         throw new ConfigIncorrectException("there was a problem reading the configuration");
 
