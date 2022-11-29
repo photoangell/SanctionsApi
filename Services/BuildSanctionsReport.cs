@@ -99,9 +99,8 @@ public class BuildSanctionsReport : IBuildSanctionsReport
     {
         var foundRecord = new Dictionary<string, string>();
 
-        for (var i = 0; i < _reportParams.HeaderFields.Count; i++)
+        for (var i = 0; i < row.Count; i++)
         {
-            //TODO: this feels messy, cleaner way of doing this???
             var tempField = "";
             if (foundRecord.ContainsKey(_reportParams.HeaderFields[i]))
                 tempField = "_" + i;
