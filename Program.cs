@@ -6,8 +6,14 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using SanctionsApi.Models;
 using SanctionsApi.Services;
+using Serilog;
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog();
 builder.Services.Configure<List<SanctionsListConfig>>(builder.Configuration.GetSection("SanctionLists"));
 
 const string CorsOriginsSetup = "SanctionsApiOrigins";
@@ -33,6 +39,7 @@ if (builder.Environment.IsDevelopment())
 builder.Services.AddScoped<IBuildSanctionsReport, BuildSanctionsReport>();
 
 var app = builder.Build();
+app.UseSerilogRequestLogging();
 app.Logger.LogInformation("The app started");
 
 if (app.Environment.IsDevelopment())
