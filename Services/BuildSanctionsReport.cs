@@ -124,7 +124,9 @@ public class BuildSanctionsReport : IBuildSanctionsReport
         var nameList = new FullName();
         var cleanedNames = fullName.Trim().ToLower().Split(' ').Select(n => n.Trim()).Where(n => n.Length > 0);
         var cleanedAndDeNoisedNames = cleanedNames.Where(DeNoiseName);
-        nameList.Names.AddRange(cleanedAndDeNoisedNames);
+        var cleanedDeNoisedAlphaNumericNames =
+            cleanedAndDeNoisedNames.Select(n => new string(n.Where(Char.IsLetterOrDigit).ToArray()));
+        nameList.Names.AddRange(cleanedDeNoisedAlphaNumericNames);
         return nameList;
     }
 
