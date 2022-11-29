@@ -74,18 +74,12 @@ public class BuildSanctionsReport : IBuildSanctionsReport
             _reportContainer.Report.ResultSummary.SourceFileVersion = row[0] + ' ' + row[1];
 
         if (rowIndex == _reportParams.HeaderIndex)
-            RecordHeaderFields(row);
+            _reportParams.HeaderFields.AddRange(row);
 
         if (_fullNames.Any(fullName => IsFullNameInRow(fullName, row)))
         {
             AddRowToReport(row);
         }
-    }
-
-    private void RecordHeaderFields(IEnumerable<string> row)
-    {
-        foreach (var field in row)
-            _reportParams.HeaderFields.Add(field);
     }
 
     private static bool IsFullNameInRow(FullName fullName, IEnumerable<string> row)
