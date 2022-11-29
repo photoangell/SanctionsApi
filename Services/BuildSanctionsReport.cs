@@ -147,7 +147,11 @@ public class BuildSanctionsReport : IBuildSanctionsReport
             "are",
             "were",
             "has",
-            "had"
+            "had", 
+            "limited",
+            "ltd",
+            "company",
+            "plc"
         };
         return !commonWords.Contains(s);
     }
