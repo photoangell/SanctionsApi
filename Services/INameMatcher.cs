@@ -3,7 +3,7 @@ using SanctionsApi.Models;
 
 namespace SanctionsApi.Services;
 
-public interface ISimpleNameMatcher
+public interface INameMatcher
 {
     bool Execute(IEnumerable<FullName> fullNames, IReadOnlyList<string> row);
 }

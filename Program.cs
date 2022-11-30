@@ -38,7 +38,7 @@ if (builder.Environment.IsDevelopment())
 }
 
 builder.Services.AddScoped<IBuildSanctionsReport, BuildSanctionsReport>()
-    .AddScoped<ISimpleNameMatcher, SimpleNameMatcher>();
+    .AddScoped<INameMatcher, SimpleNameMatcher>();
 
 var app = builder.Build();
 app.UseSerilogRequestLogging();

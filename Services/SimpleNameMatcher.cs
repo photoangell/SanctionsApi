@@ -6,7 +6,7 @@ using SanctionsApi.Models;
 
 namespace SanctionsApi.Services;
 
-public class SimpleNameMatcher : ISimpleNameMatcher
+public class SimpleNameMatcher : INameMatcher
 {
     private readonly ILogger<SimpleNameMatcher> _logger;
 

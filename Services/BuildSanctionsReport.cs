@@ -19,12 +19,12 @@ public class BuildSanctionsReport : IBuildSanctionsReport
     private readonly ILogger<BuildSanctionsReport> _logger;
     private readonly ReportContainer _reportContainer = new();
     private readonly IEnumerable<SanctionsListConfig> _sanctionsListConfigs;
-    private readonly ISimpleNameMatcher _simpleNameMatcher;
+    private readonly INameMatcher _simpleNameMatcher;
     private IEnumerable<FullName> _fullNames = default!;
     private SanctionsListConfig _reportParams = default!;
 
     public BuildSanctionsReport(ILogger<BuildSanctionsReport> logger,
-        IOptionsMonitor<List<SanctionsListConfig>> sanctionsListConfigs, ISimpleNameMatcher simpleNameMatcher)
+        IOptionsMonitor<List<SanctionsListConfig>> sanctionsListConfigs, INameMatcher simpleNameMatcher)
     {
         _logger = logger;
         _simpleNameMatcher = simpleNameMatcher;
