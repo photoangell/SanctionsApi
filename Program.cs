@@ -18,11 +18,14 @@ builder.Host.UseSerilog();
 builder.Services.Configure<List<SanctionsListConfig>>(builder.Configuration.GetSection("SanctionLists"));
 
 const string CorsOriginsSetup = "SanctionsApiOrigins";
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(CorsOriginsSetup,
-        builder => { builder.AllowAnyOrigin(); });
-});
+builder.Services.AddCors(options => options.AddPolicy(CorsOriginsSetup,
+    builder =>
+    {
+        builder
+            .WithOrigins(AllowedOrigins())
+            .SetIsOriginAllowedToAllowWildcardSubdomains()
+            .AllowCredentials();
+    }));
 builder.Services.AddControllers();
 
 if (builder.Environment.IsDevelopment())
@@ -41,6 +44,7 @@ builder.Services.AddScoped<IBuildSanctionsReport, BuildSanctionsReport>()
     .AddScoped<INameMatcher, SimpleNameMatcher>();
 
 var app = builder.Build();
+app.UseCors(CorsOriginsSetup);
 app.UseSerilogRequestLogging();
 app.Logger.LogInformation("The app started");
 
@@ -52,8 +56,21 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors(CorsOriginsSetup);
 app.MapControllers();
 
 app.Run();
 app.Logger.LogInformation("The app terminated");
+
+string[] AllowedOrigins()
+{
+    if (builder.Environment.IsDevelopment())
+    {
+        return new[] { "http://localhost", "https://localhost:5001" };
+    }
+
+    return new[]
+    {
+        "https://www.conveyancinginsurance.co.uk", "https://conveyancinginsurance.co.uk",
+        "http://complaints.legal-contingency.co.uk/", "https://uw.lcre.uk/"
+    };
+}
