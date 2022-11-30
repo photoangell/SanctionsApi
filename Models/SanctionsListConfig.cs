@@ -9,5 +9,6 @@ public class SanctionsListConfig
     public string Delimiter { get; init; } = default!;
     public int HeaderIndex { get; init; }
     public string Encoding { get; init; } = "iso-8859-1";
+    public int MetaDataIndex { get; init; }
     public List<string> HeaderFields { get; } = new();
 }

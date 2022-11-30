@@ -8,7 +8,7 @@ public class ResultSummary
     public string ReportTitle => "Sanctions Check Report";
 
     [JsonPropertyName("version")]
-    public string SourceFileVersion { get; set; } = default!;
+    public string MetaData { get; set; } = default!;
 
     [JsonPropertyName("downloaded")]
     public string SourceFileDownloadedDate { get; set; } = default!;

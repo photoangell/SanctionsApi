@@ -72,8 +72,8 @@ public class BuildSanctionsReport : IBuildSanctionsReport
 
     private void ProcessRow(IReadOnlyList<string> row, int rowIndex)
     {
-        if (rowIndex == 1 && row[0] == "Last Updated") // for uk sanctions check
-            _reportContainer.Report.ResultSummary.SourceFileVersion = row[0] + ' ' + row[1];
+        if (rowIndex == _reportParams.MetaDataIndex)
+            _reportContainer.Report.ResultSummary.MetaData = String.Join(" ", row).Replace(" ", "");
 
         if (rowIndex == _reportParams.HeaderIndex)
             _reportParams.HeaderFields.AddRange(row);
