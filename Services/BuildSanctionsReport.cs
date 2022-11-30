@@ -19,13 +19,15 @@ public class BuildSanctionsReport : IBuildSanctionsReport
     private readonly ILogger<BuildSanctionsReport> _logger;
     private readonly ReportContainer _reportContainer = new();
     private readonly IEnumerable<SanctionsListConfig> _sanctionsListConfigs;
+    private readonly ISimpleNameMatcher _simpleNameMatcher;
     private IEnumerable<FullName> _fullNames = default!;
     private SanctionsListConfig _reportParams = default!;
 
     public BuildSanctionsReport(ILogger<BuildSanctionsReport> logger,
-        IOptionsMonitor<List<SanctionsListConfig>> sanctionsListConfigs)
+        IOptionsMonitor<List<SanctionsListConfig>> sanctionsListConfigs, ISimpleNameMatcher simpleNameMatcher)
     {
         _logger = logger;
+        _simpleNameMatcher = simpleNameMatcher;
         _sanctionsListConfigs = sanctionsListConfigs.CurrentValue;
     }
 
@@ -76,23 +78,10 @@ public class BuildSanctionsReport : IBuildSanctionsReport
         if (rowIndex == _reportParams.HeaderIndex)
             _reportParams.HeaderFields.AddRange(row);
 
-        if (_fullNames.Any(fullName => IsFullNameInRow(fullName, row)))
+        if (_simpleNameMatcher.Execute(_fullNames, row))
         {
             AddRowToReport(row);
         }
-    }
-
-    private static bool IsFullNameInRow(FullName fullName, IEnumerable<string> row)
-    {
-        var countMatchedNames = row.SelectMany(r => r.Split(' '))
-            .Distinct()
-            .Join(fullName.Names,
-                r => r.ToLower(),
-                n => n.ToLower(),
-                (r, _) => new { r })
-            .Count();
-
-        return countMatchedNames >= fullName.MaxAllowedCount;
     }
 
     private void AddRowToReport(IReadOnlyList<string> row)

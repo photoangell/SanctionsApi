@@ -36,7 +36,8 @@ if (builder.Environment.IsDevelopment())
     });
 }
 
-builder.Services.AddScoped<IBuildSanctionsReport, BuildSanctionsReport>();
+builder.Services.AddScoped<IBuildSanctionsReport, BuildSanctionsReport>()
+    .AddScoped<ISimpleNameMatcher, SimpleNameMatcher>();
 
 var app = builder.Build();
 app.UseSerilogRequestLogging();
