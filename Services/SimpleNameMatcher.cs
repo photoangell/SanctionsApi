@@ -28,7 +28,7 @@ public class SimpleNameMatcher : ISimpleNameMatcher
             .Join(fullName.Names,
                 r => r,
                 n => n,
-                (r, _) => new { r })
+                (_, _) => true)
             .Count();
 
         if (countMatchedNames >= fullName.MaxAllowedCount)
