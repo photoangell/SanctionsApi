@@ -8,11 +8,12 @@ using SanctionsApi.Models;
 using SanctionsApi.Services;
 using Serilog;
 
+var builder = WebApplication.CreateBuilder(args);
 Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
     .WriteTo.Console()
     .CreateLogger();
 
-var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog();
 builder.Services.Configure<List<SanctionsListConfig>>(builder.Configuration.GetSection("SanctionLists"));
 
