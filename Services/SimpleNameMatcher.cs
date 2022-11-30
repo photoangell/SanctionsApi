@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using SanctionsApi.Models;
@@ -22,10 +23,11 @@ public class SimpleNameMatcher : ISimpleNameMatcher
     private bool IsFullNameInRow(FullName fullName, IEnumerable<string> row)
     {
         var countMatchedNames = row.SelectMany(r => r.Split(' '))
+            .Select(n => new string(n.ToLower().Where(Char.IsLetterOrDigit).ToArray()))
             .Distinct()
             .Join(fullName.Names,
-                r => r.ToLower(),
-                n => n.ToLower(),
+                r => r,
+                n => n,
                 (r, _) => new { r })
             .Count();
 
