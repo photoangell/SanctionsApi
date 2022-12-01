@@ -111,7 +111,7 @@ public class BuildSanctionsReport : IBuildSanctionsReport
         var cleanedAndDeNoisedNames = cleanedNames.Where(DeNoiseName);
         var cleanedDeNoisedAlphaNumericNames =
             cleanedAndDeNoisedNames.Select(n => new string(n.Where(Char.IsLetterOrDigit).ToArray()));
-        nameList.Names.AddRange(cleanedDeNoisedAlphaNumericNames);
+        cleanedDeNoisedAlphaNumericNames.ToList().ForEach(nameList.Names.Add);
         return nameList;
     }
 

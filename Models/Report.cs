@@ -8,12 +8,12 @@ public class Report
     public Report()
     {
         ResultSummary = new ResultSummary();
-        SanctionsMatches = new List<Dictionary<string, string>>();
+        SanctionsMatches = new List<IDictionary<string, string>>();
     }
 
     [JsonPropertyName("resultSummary")]
     public ResultSummary ResultSummary { get; set; }
 
     [JsonPropertyName("record")]
-    public List<Dictionary<string, string>> SanctionsMatches { get; }
+    public ICollection<IDictionary<string, string>> SanctionsMatches { get; }
 }
