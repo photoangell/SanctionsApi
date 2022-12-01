@@ -4,7 +4,14 @@ publish to test with
 dotnet publish -c Release --output \\192.168.1.8\d$\domains\api.sanctions
 
 publish to live with....
-dotnet publish -c Release --output \\lcapp2016\api$\api.sanctions
+dotnet publish -c Release --output \\lcapp2016\api$\api.sanctions /p:EnvironmentName=Production
+
+with app_offline...
+```
+copy .\app_offline.htm \\lcapp2016\api$\api.sanctions\app_offline.htm ; `
+dotnet publish -c Release --output \\lcapp2016\api$\api.sanctions ; `
+del \\lcapp2016\api$\api.sanctions\app_offline.htm 
+```
 
 Some sample queries
 https://localhost:5001/sanctions?name=ZABIN,%20Sultan&name=bob&sanctionsList=usa
