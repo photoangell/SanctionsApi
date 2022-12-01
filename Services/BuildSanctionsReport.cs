@@ -77,7 +77,7 @@ public class BuildSanctionsReport : IBuildSanctionsReport
         var i = 0;
         while (await parser.ReadAsync())
         {
-            ProcessRow(parser.Record, ++i);
+            ProcessRow(parser.Record!, ++i);
         }
 
         _reportContainer.Report.ResultSummary = MakeReportSummary(_reportContainer.Report.ResultSummary);
@@ -103,6 +103,8 @@ public class BuildSanctionsReport : IBuildSanctionsReport
 
     private void ProcessRow(IReadOnlyList<string> row, int rowIndex)
     {
+        if (row == null) return;
+
         if (rowIndex == _reportParams.MetaDataIndex)
             _reportContainer.Report.ResultSummary.MetaData = String.Join(" ", row).Replace(" ", "");
 
