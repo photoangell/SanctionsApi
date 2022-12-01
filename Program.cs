@@ -24,6 +24,7 @@ builder.Services.AddCors(options => options.AddPolicy(CorsOriginsSetup,
         builder
             .WithOrigins(AllowedOrigins())
             .SetIsOriginAllowedToAllowWildcardSubdomains()
+            .AllowAnyHeader()
             .AllowCredentials();
     }));
 builder.Services.AddControllers();
@@ -70,7 +71,7 @@ string[] AllowedOrigins()
 
     return new[]
     {
-        "https://www.conveyancinginsurance.co.uk", "https://conveyancinginsurance.co.uk",
+        "https://*.conveyancinginsurance.co.uk", "http://*.conveyancinginsurance.co.uk",
         "http://complaints.legal-contingency.co.uk/", "https://uw.lcre.uk/"
     };
 }
