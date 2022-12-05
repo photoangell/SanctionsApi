@@ -72,6 +72,7 @@ string[] AllowedOrigins()
     return new[]
     {
         "https://*.conveyancinginsurance.co.uk", "http://*.conveyancinginsurance.co.uk",
+        "https://*.crminsurance.co.uk", "http://*.crminsurance.co.uk",
         "http://complaints.legal-contingency.co.uk", "https://uw.lcre.uk"
     };
 }
