@@ -42,7 +42,8 @@ if (builder.Environment.IsDevelopment())
 }
 
 builder.Services.AddScoped<IBuildSanctionsReport, BuildSanctionsReport>()
-    .AddScoped<INameMatcher, SimpleNameMatcher>();
+    //.AddScoped<INameMatcher, SimpleNameMatcher>();
+    .AddScoped<INameMatcher, MLNameMatcher>();
 
 var app = builder.Build();
 app.UseCors(CorsOriginsSetup);
