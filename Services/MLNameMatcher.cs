@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Microsoft.ML;
 using SanctionsApi.Models;
@@ -10,51 +9,26 @@ namespace SanctionsApi.Services;
 public class MLNameMatcher : INameMatcher
 {
     private readonly ILogger<MLNameMatcher> _logger;
-    
+
     public MLNameMatcher(ILogger<MLNameMatcher> logger)
     {
         _logger = logger;
     }
-    
-    public bool ExecuteWithML(IEnumerable<FullName> fullNames, IReadOnlyList<string> row)
-    {
-        double threshold = 0.5;
-        // Prepare your data
-        var mlContext = new MLContext();
-        var transformedData = PrepareData(mlContext, fullNames, row);
-    
-        // Now you can compare names in a more sophisticated way
-        var data = mlContext.Data.CreateEnumerable<TransformedData>(transformedData, reuseRowObject: false);
-        
-        foreach (var item in data)
-        {
-            float similarity = CalculateCosineSimilarity(item.Features, item.RowFeatures);
-            
-            if (similarity > threshold) // Choose a threshold that suits you
-            {
-                //_logger.LogInformation("Found a match: {fullName}", item.FullName);
-                return true;
-            }
-        }
-    
-        //_logger.LogInformation("No match found");
-        return false; // Or true depending on your comparison logic
-    }
-    
+
     public bool Execute(IEnumerable<FullName> fullNames, IReadOnlyList<string> row)
     {
         var threshold = 3;
-        foreach(var fullName in fullNames)
+        foreach (var fullName in fullNames)
         {
-            bool allPartsMatched = true;
+            var allPartsMatched = true;
 
             // Compare all name parts with the row strings
-            foreach(var namePart in fullName.NameParts)
+            foreach (var namePart in fullName.NameParts)
             {
                 var namePartLower = namePart.ToLower();
-                bool namePartMatched = false;
+                var namePartMatched = false;
 
-                foreach(var s in row)
+                foreach (var s in row)
                 {
                     var sLower = s.ToLower();
                     // if (s.ToLower().Contains("naumov") && namePart.ToLower().Contains("naumov"))
@@ -64,7 +38,7 @@ public class MLNameMatcher : INameMatcher
                     // }
 
                     var distance = GetLevenshteinDistance(namePartLower, sLower);
-                    if(distance < threshold)
+                    if (distance < threshold)
                     {
                         namePartMatched = true;
                         break; // break loop if this name part matched
@@ -88,49 +62,74 @@ public class MLNameMatcher : INameMatcher
 
         return false;
     }
-    
+
+    public bool ExecuteWithML(IEnumerable<FullName> fullNames, IReadOnlyList<string> row)
+    {
+        var threshold = 0.5;
+        // Prepare your data
+        var mlContext = new MLContext();
+        var transformedData = PrepareData(mlContext, fullNames, row);
+
+        // Now you can compare names in a more sophisticated way
+        var data = mlContext.Data.CreateEnumerable<TransformedData>(transformedData, false);
+
+        foreach (var item in data)
+        {
+            var similarity = CalculateCosineSimilarity(item.Features, item.RowFeatures);
+
+            if (similarity > threshold) // Choose a threshold that suits you
+            {
+                //_logger.LogInformation("Found a match: {fullName}", item.FullName);
+                return true;
+            }
+        }
+
+        //_logger.LogInformation("No match found");
+        return false; // Or true depending on your comparison logic
+    }
+
     public IDataView PrepareData(MLContext mlContext, IEnumerable<FullName> fullNames, IReadOnlyList<string> row)
     {
         // Transform the data into a format that ML.net can work with
         var data = new List<InputData>();
         foreach (var name in fullNames)
         {
-            data.Add(new InputData { FullName = name.ToString(), RowString = string.Join(" ", row) });
+            data.Add(new InputData { FullName = name.ToString(), RowString = String.Join(" ", row) });
         }
 
         // Load the data into IDataView
         var dataView = mlContext.Data.LoadFromEnumerable(data);
 
         // Define the pipeline for feature extraction
-        var pipeline = mlContext.Transforms.Text.FeaturizeText(outputColumnName: "Features", inputColumnName: "FullName")
-            .Append(mlContext.Transforms.Text.FeaturizeText(outputColumnName: "RowFeatures", inputColumnName: "RowString"));
+        var pipeline = mlContext.Transforms.Text.FeaturizeText("Features", "FullName")
+            .Append(mlContext.Transforms.Text.FeaturizeText("RowFeatures", "RowString"));
 
         // Transform the data
         var transformedData = pipeline.Fit(dataView).Transform(dataView);
 
         return transformedData;
     }
-    
+
     private static float CalculateCosineSimilarity(float[] vectorA, float[] vectorB)
     {
-        int length = vectorA.Length < vectorB.Length ? vectorA.Length : vectorB.Length;
+        var length = vectorA.Length < vectorB.Length ? vectorA.Length : vectorB.Length;
 
         float dotProduct = 0;
         float magnitudeA = 0;
         float magnitudeB = 0;
 
-        for (int i = 0; i < length; i++)
+        for (var i = 0; i < length; i++)
         {
             dotProduct += vectorA[i] * vectorB[i];
             magnitudeA += vectorA[i] * vectorA[i];
             magnitudeB += vectorB[i] * vectorB[i];
         }
 
-        float magnitudeAMagnitudeB = (float)Math.Sqrt(magnitudeA) * (float)Math.Sqrt(magnitudeB);
-        float similarity = dotProduct / magnitudeAMagnitudeB;
+        var magnitudeAMagnitudeB = (float)Math.Sqrt(magnitudeA) * (float)Math.Sqrt(magnitudeB);
+        var similarity = dotProduct / magnitudeAMagnitudeB;
         return similarity;
     }
-    
+
     public static int GetLevenshteinDistance(string string1, string string2)
     {
         if (string1 == null) throw new ArgumentNullException("string1");
@@ -152,6 +151,7 @@ public class MLNameMatcher : INameMatcher
                 Math.Min(matrix[i - 1, j] + 1, matrix[i, j - 1] + 1),
                 matrix[i - 1, j - 1] + diff);
         }
+
         return matrix[string1.Length, string2.Length];
     }
 }
@@ -167,4 +167,3 @@ public class TransformedData : InputData
     public float[] Features { get; set; }
     public float[] RowFeatures { get; set; }
 }
-

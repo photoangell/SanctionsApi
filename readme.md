@@ -7,6 +7,7 @@ publish to live with....
 dotnet publish -c Release --output \\lcapp2016\api$\api.sanctions /p:EnvironmentName=Production
 
 with app_offline...
+
 ```
 copy .\app_offline.htm \\lcapp2016\api$\api.sanctions\app_offline.htm ; `
 dotnet publish -c Release --output \\lcapp2016\api$\api.sanctions ; `
