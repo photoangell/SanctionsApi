@@ -56,7 +56,7 @@ public class BuildSanctionsReport : IBuildSanctionsReport
     private SanctionsListConfig _reportParams = default!;
 
     public BuildSanctionsReport(ILogger<BuildSanctionsReport> logger,
-        IOptionsMonitor<List<SanctionsListConfig>> sanctionsListConfigs, INameMatcher simpleNameMatcher, ISanctionsDataLoader sanctionsDataLoader)
+        IOptionsMonitor<IEnumerable<SanctionsListConfig>> sanctionsListConfigs, INameMatcher simpleNameMatcher, ISanctionsDataLoader sanctionsDataLoader)
     {
         _logger = logger;
         _simpleNameMatcher = simpleNameMatcher;
