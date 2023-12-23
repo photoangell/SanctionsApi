@@ -96,6 +96,7 @@ public class SanctionsDataLoader : ISanctionsDataLoader
 
     private void ProcessRow(string[] row, int rowIndex)
     {
+        //TODO: remove this comment
         if (row == null) return;
 
         if (rowIndex == _reportParams.MetaDataIndex)
