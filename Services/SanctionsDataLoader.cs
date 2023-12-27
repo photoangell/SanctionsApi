@@ -53,7 +53,7 @@ public class SanctionsDataLoader : ISanctionsDataLoader
 
     public async IAsyncEnumerable<string[]> Execute(string area)
     {
-        _sanctionsDataGb = await LoadSanctionsData("gb");
+        _sanctionsDataGb = LoadSanctionsData("gb");
         _sanctionsDataEu = await LoadSanctionsData("eu");
         _sanctionsDataUsa = await LoadSanctionsData("usa");
         
@@ -109,5 +109,15 @@ public class SanctionsDataLoader : ISanctionsDataLoader
             AddRowToReport(row);
         }
     }
+    
+    private CsvParser SetupCsvParser(TextReader fileReader)
+    {
+        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+        {
+            Delimiter = _reportParams.Delimiter,
+            BadDataFound = null
+        };
 
+        return new CsvParser(fileReader, config);
+    }
 }
