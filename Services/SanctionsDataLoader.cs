@@ -28,7 +28,7 @@ public class SanctionsDataLoader : ISanctionsDataLoader
     private IAsyncEnumerable<string[]> _sanctionsDataUsa;
 
     public SanctionsDataLoader(ILogger<SanctionsDataLoader> logger,
-        IOptionsMonitor<IEnumerable<SanctionsListConfig>> sanctionsListConfigs)
+        IOptionsMonitor<List<SanctionsListConfig>> sanctionsListConfigs)
     {
         _logger = logger;
         _sanctionsListConfigs = sanctionsListConfigs.CurrentValue;
