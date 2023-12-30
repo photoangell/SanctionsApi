@@ -31,9 +31,6 @@
             ]
         }
     },
-    "forwardPorts": [
-        8080
-    ],
     "postCreateCommand": "dotnet restore",
     "hostRequirements": {
         "memory": "8gb",
@@ -42,11 +39,5 @@
     "remoteEnv": {
         "DOTNET_MULTILEVEL_LOOKUP": "0",
         "TARGET": "net8.0"
-    },
-    "portsAttributes": {
-        "8080": {
-            "label": "Sanctions API",
-            "onAutoForward": "notify"
-        }
     }
 }
