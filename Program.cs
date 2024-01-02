@@ -18,15 +18,15 @@ builder.Host.UseSerilog();
 builder.Services.Configure<List<SanctionsListConfig>>(builder.Configuration.GetSection("SanctionLists"));
 
 const string CorsOriginsSetup = "SanctionsApiOrigins";
-builder.Services.AddCors(options => options.AddPolicy(CorsOriginsSetup,
-    builder =>
-    {
-        builder
-            .WithOrigins(AllowedOrigins())
-            .SetIsOriginAllowedToAllowWildcardSubdomains()
-            .AllowAnyHeader()
-            .AllowCredentials();
-    }));
+// builder.Services.AddCors(options => options.AddPolicy(CorsOriginsSetup,
+//     builder =>
+//     {
+//         builder
+//             .WithOrigins(AllowedOrigins())
+//             .SetIsOriginAllowedToAllowWildcardSubdomains()
+//             .AllowAnyHeader()
+//             .AllowCredentials();
+//     }));
 builder.Services.AddControllers();
 
 if (builder.Environment.IsDevelopment())
@@ -47,7 +47,7 @@ builder.Services.AddScoped<IBuildSanctionsReport, BuildSanctionsReport>()
     .AddSingleton<ISanctionsDataLoader, SanctionsDataLoader>();
 
 var app = builder.Build();
-app.UseCors(CorsOriginsSetup);
+//app.UseCors(CorsOriginsSetup);
 app.UseSerilogRequestLogging();
 app.Logger.LogInformation("The app started");
 
