@@ -42,8 +42,8 @@ if (builder.Environment.IsDevelopment())
 }
 
 builder.Services.AddScoped<IBuildSanctionsReport, BuildSanctionsReport>()
-    //.AddScoped<INameMatcher, SimpleNameMatcher>();
-    .AddScoped<INameMatcher, MLNameMatcher>()
+    .AddScoped<INameMatcher, SimpleNameMatcher>()
+    //.AddScoped<INameMatcher, MLNameMatcher>()
     .AddSingleton<ISanctionsDataLoader, SanctionsDataLoader>();
 
 var app = builder.Build();
