@@ -11,4 +11,5 @@ public class SanctionsListConfig
     public string Encoding { get; init; } = "iso-8859-1";
     public int MetaDataIndex { get; init; }
     public List<string> HeaderFields { get; } = new();
+    public int ColumnsToReadCount { get; init; }
 }
