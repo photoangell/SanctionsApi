@@ -50,16 +50,17 @@ public class BuildSanctionsReport : IBuildSanctionsReport
     private readonly ILogger<BuildSanctionsReport> _logger;
     private readonly ReportContainer _reportContainer = new();
     private readonly IEnumerable<SanctionsListConfig> _sanctionsListConfigs;
-    private readonly INameMatcher _simpleNameMatcher;
+    private readonly INameMatcher _nameMatcher;
     private readonly ISanctionsDataLoader _sanctionsDataLoader;
     private IEnumerable<FullName> _fullNames = default!;
     private SanctionsListConfig _reportParams = default!;
 
     public BuildSanctionsReport(ILogger<BuildSanctionsReport> logger,
-        IOptionsMonitor<List<SanctionsListConfig>> sanctionsListConfigs, INameMatcher simpleNameMatcher, ISanctionsDataLoader sanctionsDataLoader)
+        IOptionsMonitor<List<SanctionsListConfig>> sanctionsListConfigs, INameMatcher nameMatcher,
+        ISanctionsDataLoader sanctionsDataLoader)
     {
         _logger = logger;
-        _simpleNameMatcher = simpleNameMatcher;
+        _nameMatcher = nameMatcher;
         _sanctionsDataLoader = sanctionsDataLoader;
         _sanctionsListConfigs = sanctionsListConfigs.CurrentValue;
     }
@@ -76,7 +77,6 @@ public class BuildSanctionsReport : IBuildSanctionsReport
         using var fileReader = new StreamReader(_reportParams.FileName, Encoding.GetEncoding(_reportParams.Encoding));
         using var parser = SetupCsvParser(fileReader);
 
-        
         var i = 0;
         while (await parser.ReadAsync())
         {
@@ -115,6 +115,7 @@ public class BuildSanctionsReport : IBuildSanctionsReport
             _reportParams.HeaderFields.AddRange(row);
 
         if (_simpleNameMatcher.Execute(_fullNames, row))
+        if (_nameMatcher.Execute(_fullNames, columnsToRead))
         {
             AddRowToReport(row);
         }
