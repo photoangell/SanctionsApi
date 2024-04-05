@@ -114,7 +114,9 @@ public class BuildSanctionsReport : IBuildSanctionsReport
         if (rowIndex == _reportParams.HeaderIndex)
             _reportParams.HeaderFields.AddRange(row);
 
-        var columnsToRead = row.Take(_reportParams.ColumnsToReadCount).ToList();
+        var columnsToRead = row.Skip(_reportParams.StartColumn)
+            .Take(_reportParams.EndColumn - _reportParams.StartColumn)
+            .ToList();
         if (_nameMatcher.Execute(_fullNames, columnsToRead))
         {
             AddRowToReport(row);
