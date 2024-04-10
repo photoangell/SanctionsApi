@@ -44,6 +44,6 @@ public class RegexNameMatcherTests
         var result = _matcher.Execute(fullNames, rowData);
 
         // Assert
-        Assert.True(expectedResult == result);
+        Assert.That(expectedResult, Is.EqualTo(result));
     }
 }
