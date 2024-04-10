@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SanctionsApi", "SanctionsApi.csproj", "{22721A97-C5B3-47F8-AFB0-5BA731B94029}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SanctionsApiTest", "SanctionsApiTest\SanctionsApiTest.csproj", "{01DDDCD0-78D3-4328-862A-0BD75666FE11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SanctionsApi", "SanctionsApiSrc\SanctionsApi.csproj", "{75F1E25A-AF91-408A-8CEE-A3EFFA6995B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,9 +16,13 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{22721A97-C5B3-47F8-AFB0-5BA731B94029}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{22721A97-C5B3-47F8-AFB0-5BA731B94029}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{22721A97-C5B3-47F8-AFB0-5BA731B94029}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{22721A97-C5B3-47F8-AFB0-5BA731B94029}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01DDDCD0-78D3-4328-862A-0BD75666FE11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01DDDCD0-78D3-4328-862A-0BD75666FE11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01DDDCD0-78D3-4328-862A-0BD75666FE11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01DDDCD0-78D3-4328-862A-0BD75666FE11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75F1E25A-AF91-408A-8CEE-A3EFFA6995B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75F1E25A-AF91-408A-8CEE-A3EFFA6995B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75F1E25A-AF91-408A-8CEE-A3EFFA6995B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75F1E25A-AF91-408A-8CEE-A3EFFA6995B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
