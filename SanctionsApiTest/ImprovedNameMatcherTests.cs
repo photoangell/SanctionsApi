@@ -26,6 +26,7 @@ public class ImprovedNameMatcherTests
     [TestCase("C Limited", "B", false)]
     [TestCase("ABC Limited", "B Limited", false)]
     [TestCase("B & C Limited", "B & C Limited", true)]
+    [TestCase("Bob Limited", "B & C Limited", false)]
     
     public void Execute_FindsExpectedNameInRowData_ReturnsExpectedTrue(string nameInRow, string nameToTest, bool expectedResult)
     {
