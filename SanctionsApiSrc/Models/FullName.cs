@@ -14,4 +14,52 @@ public class FullName
     {
         return String.Join(" ", Names);
     }
+    
+    public FullName MapNameToFullNameObject(string fullName)
+    {
+        var nameList = new FullName();
+        var cleanedNames = fullName.Trim().ToLower().Split(' ').Select(n => n.Trim()).Where(n => n.Length > 0);
+        var cleanedAndDeNoisedNames = cleanedNames.Where(DeNoiseName);
+        var cleanedDeNoisedAlphaNumericNames =
+            cleanedAndDeNoisedNames.Select(n => new string(n.Where(Char.IsLetterOrDigit).ToArray()));
+        cleanedDeNoisedAlphaNumericNames.ToList().ForEach(nameList.Names.Add);
+        return nameList;
+    }
+    
+    private static bool DeNoiseName(string s)
+    {
+        return !_commonWords.Contains(s);
+    }
+    
+    private static readonly HashSet<string> _commonWords = new()
+    {
+        "of",
+        "the",
+        "and",
+        "a",
+        "an",
+        "to",
+        "at",
+        "in",
+        "on",
+        "for",
+        "by",
+        "with",
+        "from",
+        "as",
+        "is",
+        "was",
+        "were",
+        "be",
+        "been",
+        "are",
+        "were",
+        "has",
+        "had",
+        "limited",
+        "ltd",
+        "company",
+        "plc"
+    };
+
 }

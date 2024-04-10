@@ -24,20 +24,17 @@ public class RegexNameMatcherTests
     [Test]
     [TestCase("B Limited", "B", true)]
     [TestCase("C Limited", "B", false)]
+    [TestCase("ABC Limited", "B Limited", false)]
+    [TestCase("B & C Limited", "B & C Limited", true)]
+    
     public void Execute_FindsExpectedNameInRowData_ReturnsExpectedTrue(string nameInRow, string nameToTest, bool expectedResult)
     {
         // Arrange
         var fullNames = new List<FullName>();
         var fullName = new FullName();
-        fullName.Names.Add(nameToTest);
-        fullNames.Add(fullName);
-
-        // "ABC Limited", 
-        // "A&B Limited", 
-        // "A Limited", 
-        // "ACB Limited", 
-        // "B & C Limited"
-
+        var newFullName = fullName.MapNameToFullNameObject(nameToTest);
+        fullNames.Add(newFullName);
+        
         var rowData = new List<string> { nameInRow };
 
         // Act
