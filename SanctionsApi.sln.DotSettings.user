@@ -1,0 +1,11 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d8c4edd0_002D8b32_002D4a23_002Da8ca_002D4296b4569540/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Execute_FindsExpectedNameInRowData_ReturnsTrue #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::01DDDCD0-78D3-4328-862A-0BD75666FE11::net8.0::SanctionsApiTest.RegexNameMatcherTests.Execute_FindsExpectedNameInRowData_ReturnsTrue&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e1f2caaa_002Dfadd_002D4c47_002D97ff_002D0a67e8805a55/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Execute_FindsExpectedNameInRowData_ReturnsTrue" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::01DDDCD0-78D3-4328-862A-0BD75666FE11::net8.0::SanctionsApiTest.RegexNameMatcherTests&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
