@@ -8,13 +8,13 @@ using SanctionsApi.Models;
 
 namespace SanctionsApi.Services;
 
-public class RegexNameMatcher : INameMatcher
+public class ImprovedNameMatcher : INameMatcher
 
 {
     private readonly ILogger<SimpleNameMatcher> _logger;
     private readonly IWebHostEnvironment _env;
 
-    public RegexNameMatcher(ILogger<SimpleNameMatcher> logger, IWebHostEnvironment env)
+    public ImprovedNameMatcher(ILogger<SimpleNameMatcher> logger, IWebHostEnvironment env)
     {
         _logger = logger;
         _env = env;

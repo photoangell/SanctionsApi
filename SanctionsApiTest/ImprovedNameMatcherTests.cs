@@ -7,17 +7,17 @@ using SanctionsApi.Services;
 namespace SanctionsApiTest;
 
 [TestFixture]
-public class RegexNameMatcherTests
+public class ImprovedNameMatcherTests
 {
     [SetUp]
     public void SetUp()
     {
         _loggerMock = new Mock<ILogger<SimpleNameMatcher>>();
         _envMock = new Mock<IWebHostEnvironment>();
-        _matcher = new RegexNameMatcher(_loggerMock.Object, _envMock.Object);
+        _matcher = new ImprovedNameMatcher(_loggerMock.Object, _envMock.Object);
     }
 
-    private RegexNameMatcher _matcher;
+    private ImprovedNameMatcher _matcher;
     private Mock<ILogger<SimpleNameMatcher>> _loggerMock;
     private Mock<IWebHostEnvironment> _envMock;
 
