@@ -28,10 +28,18 @@ public class MarksRegexMatcher : INameMatcher
     {
         foreach (var word in row)
         {
-            if (MatchWholeWord(word, fullName.ToString()))
-            {
-                return true;
+            var matchCount = 0;
+            foreach (var namePart in fullName.NameParts)
+            { 
+                if (MatchWholeWord(word, namePart))
+                {
+                    matchCount++;
+                }
+                
             }
+
+            if (matchCount >= fullName.MaxAllowedCount)
+                return true;
         }
 
         return false;
