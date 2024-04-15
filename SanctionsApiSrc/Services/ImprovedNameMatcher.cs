@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -8,7 +9,7 @@ using SanctionsApi.Models;
 
 namespace SanctionsApi.Services;
 
-public class ImprovedNameMatcher : INameMatcher
+public partial class ImprovedNameMatcher : INameMatcher
 
 {
     private readonly ILogger<SimpleNameMatcher> _logger;
@@ -29,6 +30,8 @@ public class ImprovedNameMatcher : INameMatcher
     {
         foreach (var item in row)
         {
+            var cleanedItem = MyRegex().Replace(item, "");
+            var cleanedNoSpaceItem = SpaceRegex().Replace(cleanedItem, " ");
             var words = item.Split(' ');
 
             var countMatchedNames = words.Intersect(fullName.NameParts, StringComparer.InvariantCultureIgnoreCase).Count();
@@ -47,4 +50,10 @@ public class ImprovedNameMatcher : INameMatcher
 
         return false;
     }
+
+    [GeneratedRegex(@"[^0-9a-zA-Z ]")]
+    private static partial Regex MyRegex();
+    
+    [GeneratedRegex(@"\s+")]
+    private static partial Regex SpaceRegex();
 }

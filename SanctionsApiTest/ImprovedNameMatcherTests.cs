@@ -17,7 +17,7 @@ public class ImprovedNameMatcherTests
         _matcher = new ImprovedNameMatcher(_loggerMock.Object, _envMock.Object);
     }
 
-    private ImprovedNameMatcher _matcher;
+    private INameMatcher _matcher;
     private Mock<ILogger<SimpleNameMatcher>> _loggerMock;
     private Mock<IWebHostEnvironment> _envMock;
 
@@ -27,7 +27,9 @@ public class ImprovedNameMatcherTests
     [TestCase("ABC Limited", "B Limited", false)]
     [TestCase("B & C Limited", "B & C Limited", true)]
     [TestCase("Bob Limited", "B & C Limited", false)]
-    
+    [TestCase("Bob", "Bob Limited", true)]
+    [TestCase("B&C Limited", "B & C Limited", true)]
+    [TestCase("B & C Limited", "B&C Limited", true)]
     public void Execute_FindsExpectedNameInRowData_ReturnsExpectedTrue(string nameInRow, string nameToTest, bool expectedResult)
     {
         // Arrange
