@@ -42,7 +42,7 @@ if (builder.Environment.IsDevelopment())
 }
 
 builder.Services.AddScoped<IBuildSanctionsReport, BuildSanctionsReport>()
-    .AddScoped<INameMatcher, ImprovedNameMatcher>()
+    .AddScoped<INameMatcher, MarksRegexMatcher>()
     //.AddScoped<INameMatcher, MLNameMatcher>()
     .AddSingleton<ISanctionsDataLoader, SanctionsDataLoader>();
 
