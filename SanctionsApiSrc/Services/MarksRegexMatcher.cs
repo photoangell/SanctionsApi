@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Hosting;
@@ -10,8 +9,8 @@ namespace SanctionsApi.Services;
 
 public class MarksRegexMatcher : INameMatcher
 {
-    private readonly ILogger<MarksRegexMatcher> _logger;
     private readonly IWebHostEnvironment _env;
+    private readonly ILogger<MarksRegexMatcher> _logger;
 
     public MarksRegexMatcher(ILogger<MarksRegexMatcher> logger, IWebHostEnvironment env)
     {
@@ -30,13 +29,8 @@ public class MarksRegexMatcher : INameMatcher
         {
             var matchCount = 0;
             foreach (var namePart in fullName.NameParts)
-            { 
                 if (MatchWholeWord(word, namePart))
-                {
                     matchCount++;
-                }
-                
-            }
 
             if (matchCount >= fullName.MaxAllowedCount)
                 return true;
@@ -45,7 +39,7 @@ public class MarksRegexMatcher : INameMatcher
         return false;
     }
 
-    static bool MatchWholeWord(string word, string letter)
+    private static bool MatchWholeWord(string word, string letter)
     {
         var pattern = @"\b(?<!\w)" + letter + @"(?!\w)\b";
 
