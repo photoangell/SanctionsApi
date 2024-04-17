@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -48,10 +47,10 @@ public class BuildSanctionsReport : IBuildSanctionsReport
     };
 
     private readonly ILogger<BuildSanctionsReport> _logger;
-    private readonly ReportContainer _reportContainer = new();
-    private readonly IEnumerable<SanctionsListConfig> _sanctionsListConfigs;
     private readonly INameMatcher _nameMatcher;
+    private readonly ReportContainer _reportContainer = new();
     private readonly ISanctionsDataLoader _sanctionsDataLoader;
+    private readonly IEnumerable<SanctionsListConfig> _sanctionsListConfigs;
     private IEnumerable<FullName> _fullNames = default!;
     private SanctionsListConfig _reportParams = default!;
 
@@ -78,10 +77,7 @@ public class BuildSanctionsReport : IBuildSanctionsReport
         using var parser = SetupCsvParser(fileReader);
 
         var i = 0;
-        while (await parser.ReadAsync())
-        {
-            ProcessRow(parser.Record!, ++i);
-        }
+        while (await parser.ReadAsync()) ProcessRow(parser.Record!, ++i);
 
         _reportContainer.Report.ResultSummary = MakeReportSummary(_reportContainer.Report.ResultSummary);
 
@@ -90,7 +86,7 @@ public class BuildSanctionsReport : IBuildSanctionsReport
 
     private static IEnumerable<FullName> ExtractNamesFromQueryString(IEnumerable<string> names)
     {
-        return names.Select(MapNameToFullNameObject);
+        return names.Select(name => new FullName(name));
     }
 
     private CsvParser SetupCsvParser(TextReader fileReader)
@@ -109,7 +105,7 @@ public class BuildSanctionsReport : IBuildSanctionsReport
         if (row == null) return;
 
         if (rowIndex == _reportParams.MetaDataIndex)
-            _reportContainer.Report.ResultSummary.MetaData = String.Join(" ", row).Replace(" ", "");
+            _reportContainer.Report.ResultSummary.MetaData = string.Join(" ", row).Replace(" ", "");
 
         if (rowIndex == _reportParams.HeaderIndex)
             _reportParams.HeaderFields.AddRange(row);
@@ -117,10 +113,7 @@ public class BuildSanctionsReport : IBuildSanctionsReport
         var columnsToRead = row.Skip(_reportParams.StartColumn)
             .Take(_reportParams.EndColumn + 1 - _reportParams.StartColumn)
             .ToList();
-        if (_nameMatcher.Execute(_fullNames, columnsToRead))
-        {
-            AddRowToReport(row);
-        }
+        if (_nameMatcher.Execute(_fullNames, columnsToRead)) AddRowToReport(row);
     }
 
     private void AddRowToReport(IReadOnlyList<string> row)
@@ -142,17 +135,6 @@ public class BuildSanctionsReport : IBuildSanctionsReport
         _reportContainer.Report.ResultSummary.NumberOfResults++;
     }
 
-    private static FullName MapNameToFullNameObject(string fullName)
-    {
-        var nameList = new FullName();
-        var cleanedNames = fullName.Trim().ToLower().Split(' ').Select(n => n.Trim()).Where(n => n.Length > 0);
-        var cleanedAndDeNoisedNames = cleanedNames.Where(DeNoiseName);
-        var cleanedDeNoisedAlphaNumericNames =
-            cleanedAndDeNoisedNames.Select(n => new string(n.Where(Char.IsLetterOrDigit).ToArray()));
-        cleanedDeNoisedAlphaNumericNames.ToList().ForEach(nameList.Names.Add);
-        return nameList;
-    }
-
     private static bool DeNoiseName(string s)
     {
         return !_commonWords.Contains(s);
@@ -160,7 +142,7 @@ public class BuildSanctionsReport : IBuildSanctionsReport
 
     private ResultSummary MakeReportSummary(ResultSummary resultSummary)
     {
-        resultSummary.SearchText = String.Join(",", _fullNames);
+        resultSummary.SearchText = string.Join(",", _fullNames);
         resultSummary.SourceFileDownloadedDate = File.GetLastWriteTime(_reportParams.FileName).ToString();
         return resultSummary;
     }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,31 +5,6 @@ namespace SanctionsApi.Models;
 
 public class FullName
 {
-    public ICollection<string> Names { get; } = new List<string>();
-    public int MaxAllowedCount => Names.Count > 2 ? 2 : Names.Count;
-    public IEnumerable<string> NameParts => Names.SelectMany(name => name.Split(' '));
-
-    public override string ToString()
-    {
-        return String.Join(" ", Names);
-    }
-    
-    public FullName MapNameToFullNameObject(string fullName)
-    {
-        var nameList = new FullName();
-        var cleanedNames = fullName.Trim().ToLower().Split(' ').Select(n => n.Trim()).Where(n => n.Length > 0);
-        var cleanedAndDeNoisedNames = cleanedNames.Where(DeNoiseName);
-        var cleanedDeNoisedAlphaNumericNames =
-            cleanedAndDeNoisedNames.Select(n => new string(n.Where(Char.IsLetterOrDigit).ToArray()));
-        cleanedDeNoisedAlphaNumericNames.ToList().ForEach(nameList.Names.Add);
-        return nameList;
-    }
-    
-    private static bool DeNoiseName(string s)
-    {
-        return !_commonWords.Contains(s);
-    }
-    
     private static readonly HashSet<string> _commonWords = new()
     {
         "of",
@@ -62,4 +36,32 @@ public class FullName
         "plc"
     };
 
+    public FullName()
+    {
+    }
+
+    public FullName(string fullName)
+    {
+        Names = new List<string>();
+
+        var cleanedNames = fullName.Trim().ToLower().Split(' ').Select(n => n.Trim()).Where(n => n.Length > 0);
+        var cleanedAndDeNoisedNames = cleanedNames.Where(DeNoiseName);
+        var cleanedDeNoisedAlphaNumericNames =
+            cleanedAndDeNoisedNames.Select(n => new string(n.Where(char.IsLetterOrDigit).ToArray()));
+        cleanedDeNoisedAlphaNumericNames.ToList().ForEach(Names.Add);
+    }
+
+    public ICollection<string> Names { get; } = new List<string>();
+    public int MaxAllowedCount => Names.Count > 2 ? 2 : Names.Count;
+    public IEnumerable<string> NameParts => Names.SelectMany(name => name.Split(' '));
+
+    public override string ToString()
+    {
+        return string.Join(" ", Names);
+    }
+
+    private static bool DeNoiseName(string s)
+    {
+        return !_commonWords.Contains(s);
+    }
 }

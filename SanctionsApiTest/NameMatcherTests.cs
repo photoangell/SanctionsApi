@@ -29,14 +29,14 @@ public class NameMatcherTests
     [TestCase("Bob Limited", "B & C Limited", false)]
     [TestCase("Bob", "Bob Limited", true)]
     [TestCase("B&C Limited", "B & C Limited", true)]
-    public void Execute_FindsExpectedNameInRowData_ReturnsExpectedTrue(string nameInRow, string nameToTest, bool expectedResult)
+    public void Execute_FindsExpectedNameInRowData_ReturnsExpectedTrue(string nameInRow, string nameToTest,
+        bool expectedResult)
     {
         // Arrange
         var fullNames = new List<FullName>();
-        var fullName = new FullName();
-        var newFullName = fullName.MapNameToFullNameObject(nameToTest);
+        var newFullName = new FullName(nameToTest);
         fullNames.Add(newFullName);
-        
+
         var rowData = new List<string> { nameInRow };
 
         // Act
