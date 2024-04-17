@@ -30,8 +30,8 @@ public partial class ImprovedNameMatcher : INameMatcher
     {
         foreach (var item in row)
         {
-            var cleanedItem = MyRegex().Replace(item, "");
-            var cleanedNoSpaceItem = SpaceRegex().Replace(cleanedItem, " ");
+            //var cleanedItem = MyRegex().Replace(item, "");
+            //var cleanedNoSpaceItem = SpaceRegex().Replace(cleanedItem, " ");
             var words = item.Split(' ');
 
             var countMatchedNames = words.Intersect(fullName.NameParts, StringComparer.InvariantCultureIgnoreCase).Count();

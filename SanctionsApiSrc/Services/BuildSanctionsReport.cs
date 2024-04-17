@@ -15,37 +15,6 @@ namespace SanctionsApi.Services;
 
 public class BuildSanctionsReport : IBuildSanctionsReport
 {
-    private static readonly HashSet<string> _commonWords = new()
-    {
-        "of",
-        "the",
-        "and",
-        "a",
-        "an",
-        "to",
-        "at",
-        "in",
-        "on",
-        "for",
-        "by",
-        "with",
-        "from",
-        "as",
-        "is",
-        "was",
-        "were",
-        "be",
-        "been",
-        "are",
-        "were",
-        "has",
-        "had",
-        "limited",
-        "ltd",
-        "company",
-        "plc"
-    };
-
     private readonly ILogger<BuildSanctionsReport> _logger;
     private readonly INameMatcher _nameMatcher;
     private readonly ReportContainer _reportContainer = new();
@@ -133,11 +102,6 @@ public class BuildSanctionsReport : IBuildSanctionsReport
 
         _reportContainer.Report.SanctionsMatches.Add(foundRecord);
         _reportContainer.Report.ResultSummary.NumberOfResults++;
-    }
-
-    private static bool DeNoiseName(string s)
-    {
-        return !_commonWords.Contains(s);
     }
 
     private ResultSummary MakeReportSummary(ResultSummary resultSummary)
