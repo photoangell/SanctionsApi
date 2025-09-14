@@ -510,3 +510,9 @@ FodyWeavers.xsd
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode
 
+# Rider / IntelliJ
+.idea/
+# but keep some shared project settings
+!.idea/codeStyles/
+!.idea/runConfigurations/
+!.idea/encodings.xml
