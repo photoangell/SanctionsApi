@@ -1,17 +1,17 @@
 sample link - https://localhost:5001/sanctions?name=vladimir%20naumov&name=bob&sanctionsList=eu
 
 publish to test with
-dotnet publish -c Release --output \\192.168.1.8\d$\domains\api.sanctions
+dotnet publish -c Release --output \\test\domains\api.sanctions
 
 publish to live with....
-dotnet publish -c Release --output \\lcapp2016\api$\api.sanctions /p:EnvironmentName=Production
+dotnet publish -c Release --output \\live\api$\api.sanctions /p:EnvironmentName=Production
 
 with app_offline...
 
 ```
-copy .\app_offline.htm \\lcapp2016\api$\api.sanctions\app_offline.htm ; `
-dotnet publish -c Release --output \\lcapp2016\api$\api.sanctions ; `
-del \\lcapp2016\api$\api.sanctions\app_offline.htm 
+copy .\app_offline.htm \\live\api$\api.sanctions\app_offline.htm ; `
+dotnet publish -c Release --output \\live\api$\api.sanctions ; `
+del \\live\api$\api.sanctions\app_offline.htm 
 ```
 
 Some sample queries
@@ -49,17 +49,17 @@ as terminal aliases curl to powershell's Invoke-WebRequest
 test cors in live with
 
 ```
-curl --ntlm -u lcdomain\sangell -v https://www.conveyancinginsurance.co.uk/api.sanctions/sanctions -I  -X "OPTIONS" -H 'Origin: https://www.conveyancinginsurance.co.uk' -H 'Access-Control-Request-Method: GET'
+curl --ntlm -u domain\sangell -v https://live/api.sanctions/sanctions -I  -X "OPTIONS" -H 'Origin: https://live' -H 'Access-Control-Request-Method: GET'
 ```
 
 or in a browser in dev tools
 
 ```
-fetch('https://www.conveyancinginsurance.co.uk/api.sanctions/sanctions')
+fetch('https://live/api.sanctions/sanctions')
 ```
 
 do a js fetch and pass ntlm credentia
 
 ```
-fetch('https://www.conveyancinginsurance.co.uk/api.sanctions/sanctions', {credentials: 'include'})
+fetch('https://live/api.sanctions/sanctions', {credentials: 'include'})
 ```
